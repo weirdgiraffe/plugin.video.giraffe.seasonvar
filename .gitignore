@@ -1,0 +1,6 @@
+__pycache__
+.ropeproject
+.cache
+.venv3
+.venv2
+*.pyc
