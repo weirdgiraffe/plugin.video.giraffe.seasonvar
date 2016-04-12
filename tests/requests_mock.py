@@ -51,6 +51,7 @@ class RequestsMock:
     def get(self, url, *args, **kwargs):
         for regexp, path, status in self.responses['GET']:
             if regexp.search(url):
+                print('mock for url:', url, '-', path)
                 return RequestsMockResult(path, status)
         pytest.fail("unexpected HTTP GET url:{0} args: {1} kwargs:{2}".format(
             url, args, kwargs))
