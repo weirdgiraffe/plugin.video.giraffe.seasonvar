@@ -40,7 +40,7 @@ def add_directory_to_list(dirname, url, **kwargs):
 
 def add_item_to_list(name, url, **kwargs):
     litem = li(name, **kwargs)
-    ret = xbmcplugin.addDirectoryItem(addon.handler, url, litem)
+    ret = xbmcplugin.addDirectoryItem(addon.handler, url, litem, False)
     if not ret:
         logger.error('failed to add {0} item'.format(name))
 
@@ -93,6 +93,8 @@ def screen_date(args):
 def screen_episodes(args):
     try:
         url = args.get('url')
+        if url is None:
+            raise TypeError()
         series = Series(url)
     except HTTPError as e:
         logger.error(e)
@@ -108,13 +110,14 @@ def screen_episodes(args):
     if seasons_count:
         add_directory_to_list(
             u'сезон {0}/{1}'.format(season.number, seasons_count),
-            {'action': 'screen_seasons', 'url': url},
+            addon.make_url({'action': 'screen_seasons', 'url': url}),
             items_count=len(series.seasons)
         )
     for episode in season.episodes:
         add_item_to_list(
             episode['name'],
-            {'action': 'play', 'url': episode['url']}
+            addon.make_url({'action': 'play', 'url': episode['url']}),
+            thumb=episode['thumb']
         )
     list_end()
 

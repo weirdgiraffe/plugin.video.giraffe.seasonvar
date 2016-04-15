@@ -59,7 +59,10 @@ class Season:
         playlist_url = 'http://seasonvar.ru/playls2/{0}x/trans/{1}/'\
                        'list.xml'.format(self.secure, self.id)
         playlist = self.__requester.get_json(playlist_url)
-        print(playlist)
+        for episode in playlist['playlist']:
+            yield {'url': episode['file'],
+                   'name': episode['comment'],
+                   'thumb': self.thumb}
 
     @property
     def secure(self):
@@ -71,8 +74,8 @@ class Season:
 class Series:
     def __init__(self, url):
         self.__requester = SeasonvarRequester()
-        self.__url = url
-        self.__html = self.__requester.get(url)
+        self.__url = self.__requester.absurl(url)
+        self.__html = self.__requester.get(self.__url)
         self.__seasons = None
 
     @property
@@ -84,7 +87,8 @@ class Series:
     def _seasons(self):
         regexp = re.compile(r'<a[^>]+?href="{0}"'.format(SEASON))
         for (surl, sid, sname, snum) in regexp.findall(self.__html):
-            yield Season(url=surl, id=sid, trname=sname, number=snum)
+            url = self.__requester.absurl(surl)
+            yield Season(url=url, id=sid, trname=sname, number=snum)
 
     @property
     def current_season(self):
