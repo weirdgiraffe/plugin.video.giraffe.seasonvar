@@ -8,6 +8,7 @@
 # Distributed under terms of the MIT license.
 #
 import pytest
+import json
 import os
 import re
 
@@ -32,6 +33,8 @@ class RequestsMockResult:
         self.text = file_content(path)
         self.status_code = status_code
 
+    def json(self):
+        return json.loads(self.text)
 
 class RequestsMock:
     def __init__(self):
@@ -42,11 +45,11 @@ class RequestsMock:
             self.responses[m] = []
             self.counters[m] = 0
 
-    def respond(self, url_regexp, relpath, methods=['GET']):
+    def respond(self, url_regexp, relpath, code=200, methods=['GET']):
         thisdir = os.path.dirname(__file__)
         path = os.path.join(thisdir, relpath)
         for m in methods:
-            self.responses[m] += [(re.compile(url_regexp), path, 200)]
+            self.responses[m] += [(re.compile(url_regexp), path, code)]
 
     def get(self, url, *args, **kwargs):
         for regexp, path, status in self.responses['GET']:

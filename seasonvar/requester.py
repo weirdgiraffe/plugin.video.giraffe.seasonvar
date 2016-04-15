@@ -9,6 +9,10 @@
 #
 import requests
 import logging
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urllib import urljoin
 
 
 BASEURL = 'http://seasonvar.ru'
@@ -27,6 +31,7 @@ class HTTPError(Exception):
     """exception which occures on any kind of http not 200 codes"""
     pass
 
+
 class Requester:
     def __init__(self):
         self.session = requests.Session()
@@ -35,6 +40,19 @@ class Requester:
                           'AppleWebKit/537.51.1 (KHTML, like Gecko) '
                           'Version/7.0 Mobile/11A465 Safari/9537.53',
         })
+
+    def _get(self, url=None, **custom_headers):
+        try:
+            page = self.session.get(url, headers=custom_headers)
+            if page.status_code == 200:
+                page.encoding = 'utf-8'
+                return page
+            else:
+                raise HTTPError(
+                    'bad GET page response for url {0}\n{1}'.format(url, page)
+                    )
+        except requests.exceptions.RequestException as e:
+            raise NetworkError(repr(e))
 
     def get(self, url=None, **custom_headers):
         try:
@@ -49,10 +67,14 @@ class Requester:
         except requests.exceptions.RequestException as e:
             raise NetworkError(repr(e))
 
+    def get_json(self, url=None, **custom_headers):
+        page = self._get(url, **custom_headers)
+        return page.json()
+
 
 class SeasonvarRequester(Requester):
     def __init__(self):
-        super(Requester, self).__init__()
+        super(SeasonvarRequester, self).__init__()
         self.session.headers.update({
             'Host': 'seasonvar.ru',
             'Accept-Language': 'ru-RU',
@@ -66,3 +88,5 @@ class SeasonvarRequester(Requester):
             'html5default': '1'
             })
 
+    def absurl(self, relurl):
+        return urljoin('http://seasonvar.ru', relurl)

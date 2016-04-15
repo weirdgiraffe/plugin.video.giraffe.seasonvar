@@ -49,6 +49,23 @@ def test_screen_date(requests_mock, addon, kodi):
         check_thumb_directory_item(i)
 
 
+def test_screen_episodes(requests_mock, addon, kodi):
+    requests_mock.respond(r'seasonvar.ru\/rss\.php$', 'assets/rss01.xml')
+    requests_mock.respond(r'seasonvar.ru\/.*Skorpion.*\.html$', 'assets/scorpion.html')
+    requests_mock.respond(r'seasonvar.ru\/playls2.*12394/list\.xml$', 'assets/playlist_scorpion.json')
+    requests_mock.respond(r'^hello$', 'assets/empty.html', code=404)
+    plugin_video.screen_episodes({})
+    assert len(kodi.items) == 0
+    plugin_video.screen_episodes({'url': 'hello'})
+    assert len(kodi.items) == 0
+    plugin_video.screen_episodes({
+        'url': 'http://seasonvar.ru/serial-12394-Skorpion_serial_2014_ndash_.html'
+    })
+    # assert len(kodi.items) == 3
+    # for i in kodi.items:
+    #     check_thumb_directory_item(i)
+
+
 # def test_screen_date(requests_mock, addon, kodi):
 #     requests_mock.respond(r'seasonvar.ru$', 'tests/samples/main_page.html')
 #     seasonvar = Seasonvar()

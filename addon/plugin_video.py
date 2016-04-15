@@ -10,7 +10,8 @@
 from addon.common import Addon, getLogger
 from datetime import datetime, timedelta
 import seasonvar.rss as rss
-import seasonvar.season as season
+from seasonvar.series import Series, url2thumb
+from seasonvar.requester import HTTPError, NetworkError
 import xbmcgui
 import xbmcplugin
 
@@ -72,7 +73,6 @@ def screen_date(args):
             'screen_date: "date" is missing or malformed: {0} : {1}'.format(
                 e, args))
         return
-    print(date)
     date_items = [x for x in rss.items()
                   if x['date'].month == date.month
                   and x['date'].day == date.day]
@@ -85,45 +85,31 @@ def screen_date(args):
             name,
             addon.make_url({'action': 'screen_episodes',
                             'url': item['url']}),
-            thumb=season.thumb(item['url'])
+            thumb=url2thumb(item['url'])
         )
     list_end()
 
 
-def screen_letter(args, seasonvar):
-    letter = args.get('letter')
-    if letter is None:
-        logger.error('screen_letter: "letter" arg is missing {0}'.format(args))
+def screen_episodes(args):
+    try:
+        url = args.get('url')
+        series = Series(url)
+    except HTTPError as e:
+        logger.error(e)
         return
-    letter_items = seasonvar.letter_items(letter)
-    if letter_items is None:
-        logger.error('screen_letter: letter not found {0}'.format(letter))
+    except NetworkError as e:
+        logger.error(e)
         return
-    for item in letter_items:
+    except TypeError:
+        logger.error('screen_episodes: "url" arg is missing {0}'.format(args))
+        return
+    seasons_count = len(series.seasons)
+    season = series.current_season
+    if seasons_count:
         add_directory_to_list(
-            item['name'],
-            {'action': 'screen_episodes', 'name': item['name']}
-        )
-    list_end()
-
-
-def screen_episodes(args, seasonvar):
-    name = args.get('name')
-    if name is None:
-        logger.error('screen_episodes: "name" arg is missing {0}'.format(args))
-        return
-    series = seasonvar.series(name)
-    if series is None:
-        logger.error('screen_episodes: not found {0}'.format(name))
-        return
-    season_number = args.get('season', -1)
-    season = series.seasons[season_number]
-    total_seasons = len(series.seasons)
-    if total_seasons:
-        add_directory_to_list(
-            u'сезон {0}/{1}'.format(season.number, total_seasons),
-            {'action': 'screen_seasons', 'series': series.name},
-            len(series.seasons)
+            u'сезон {0}/{1}'.format(season.number, seasons_count),
+            {'action': 'screen_seasons', 'url': url},
+            items_count=len(series.seasons)
         )
     for episode in season.episodes:
         add_item_to_list(
@@ -162,19 +148,18 @@ def play(args, seasonvar):
         return
     item = xbmcgui.ListItem(path=playurl)
     item.setProperty('IsPlayable', 'true')
-    xbmcplugin.setResolvedUrl(addon_handler, True, item)
+    xbmcplugin.setResolvedUrl(addon.handler, True, item)
 
 
 if __name__ == "__main__":
-    if 'action' in addon_args:
+    if 'action' in addon.args:
         try:
             action = addon.args['action']
             {'screen_start': screen_start,
-             'screen_date': screen_day,
-             'screen_letter': screen_letter,
+             'screen_date': screen_date,
              'screen_episodes': screen_episodes,
              'screen_seasons': screen_seasons,
              'play': play,
              }[action](addon.args)
         except KeyError:
-            logger.error('wrong action {0}'.format(addon_args['action']))
+            logger.error('wrong action {0}'.format(addon.args['action']))
