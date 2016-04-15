@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: utf-8
 # vim:fenc=utf-8:sts=0:ts=4:sw=4:et:tw=80
 
@@ -7,6 +6,7 @@
 #
 # Distributed under terms of the MIT license.
 #
+from __future__ import unicode_literals
 import pytest
 import json
 import os
@@ -24,8 +24,8 @@ def memoize(f):
 
 @memoize
 def file_content(path):
-    with open(path) as inputf:
-        return inputf.read()
+    with open(path, 'rb') as inputf:
+        return inputf.read().decode('utf-8')
 
 
 class RequestsMockResult:
@@ -35,6 +35,7 @@ class RequestsMockResult:
 
     def json(self):
         return json.loads(self.text)
+
 
 class RequestsMock:
     def __init__(self):
@@ -54,7 +55,7 @@ class RequestsMock:
     def get(self, url, *args, **kwargs):
         for regexp, path, status in self.responses['GET']:
             if regexp.search(url):
-                print('mock for url:', url, '-', path)
+                print('mock for url:{0} - {1}'.format(url, path))
                 return RequestsMockResult(path, status)
         pytest.fail("unexpected HTTP GET url:{0} args: {1} kwargs:{2}".format(
             url, args, kwargs))

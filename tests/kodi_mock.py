@@ -10,7 +10,6 @@
 import pytest
 import logging
 
-
 class Addon:
     def __init__(self, id):
         self.handler = 123

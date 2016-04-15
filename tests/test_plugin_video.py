@@ -11,7 +11,11 @@
 import pytest
 assert pytest
 import re
-from addon import plugin_video
+import addon.plugin_video as plugin_video
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
 
 
 def check_item(item):
@@ -76,10 +80,10 @@ def test_screen_episodes(requests_mock, addon, kodi):
                           'assets/scorpion.html')
     requests_mock.respond(r'seasonvar.ru\/playls2.*12394/list\.xml$',
                           'assets/playlist_scorpion.json')
-    plugin_video.screen_episodes({
-        'url': 'http://seasonvar.ru/serial-12394-Skorpion_serial_2014_ndash_.html'
-    })
+    seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
+    plugin_video.screen_episodes({'url': seasonurl})
     assert len(kodi.items) == 23
+    assert kodi.items[0]['li'].name == u'сезон 2/2'
     for i in kodi.items[1:]:
         check_thumb_item(i)
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: utf-8
 # vim:fenc=utf-8:sts=0:ts=4:sw=4:et:tw=80
 
@@ -7,12 +6,13 @@
 #
 # Distributed under terms of the MIT license.
 #
+from __future__ import unicode_literals
 import requests
 import logging
 try:
-    from urllib.parse import urljoin
+    from urllib.parse import urljoin, urlparse
 except ImportError:
-    from urllib import urljoin
+    from urlparse import urljoin, urlparse
 
 
 BASEURL = 'http://seasonvar.ru'
@@ -32,7 +32,8 @@ class HTTPError(Exception):
     pass
 
 
-class Requester:
+class Requester(object):
+
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update({
@@ -55,17 +56,8 @@ class Requester:
             raise NetworkError(repr(e))
 
     def get(self, url=None, **custom_headers):
-        try:
-            page = self.session.get(url, headers=custom_headers)
-            if page.status_code == 200:
-                page.encoding = 'utf-8'
-                return page.text
-            else:
-                raise HTTPError(
-                    'bad GET page response for url {0}\n{1}'.format(url, page)
-                    )
-        except requests.exceptions.RequestException as e:
-            raise NetworkError(repr(e))
+        page = self._get(url, **custom_headers)
+        return page.text
 
     def get_json(self, url=None, **custom_headers):
         page = self._get(url, **custom_headers)
@@ -73,6 +65,7 @@ class Requester:
 
 
 class SeasonvarRequester(Requester):
+
     def __init__(self):
         super(SeasonvarRequester, self).__init__()
         self.session.headers.update({
@@ -90,3 +83,7 @@ class SeasonvarRequester(Requester):
 
     def absurl(self, relurl):
         return urljoin('http://seasonvar.ru', relurl)
+
+    def relurl(self, url):
+        o = urlparse(url)
+        return o.path

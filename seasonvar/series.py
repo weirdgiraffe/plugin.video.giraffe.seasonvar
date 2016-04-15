@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: utf-8
 # vim:fenc=utf-8:sts=0:ts=4:sw=4:et:tw=80
 
@@ -7,15 +6,17 @@
 #
 # Distributed under terms of the MIT license.
 #
+from __future__ import unicode_literals
 import re
+from cached_property import cached_property
 try:
     from seasonvar.requester import SeasonvarRequester
 except ImportError:
     from requester import SeasonvarRequester
 
 
-SEASON = r'(\/serial-(?P<id>\d+)-(?P<name>.+?)'\
-         '(?:-(?P<season>\d+)-(?:sezon|season))?\.html)'
+SEASON = r'(\/serial-(?P<id>\d+)-(?:.+?)'\
+         '(?:-(?:\d+)-(?:sezon|season))?\.html)'
 
 
 def secure(html):
@@ -50,7 +51,7 @@ class Season:
         self.name = kwargs.get('name')
         self.number = kwargs.get('number')
         self.thumb = url2thumb(self.url)
-        self.__html = kwargs.get('html')
+        self.html = kwargs.get('html')
         self.__requester = kwargs.get('requester', SeasonvarRequester())
         self.__secure = None
 
@@ -66,32 +67,35 @@ class Season:
 
     @property
     def secure(self):
-        if self.__html is None:
-            self.__html = self.__requester.get(self.url)
-        return secure(self.__html)
+        if self.html is None:
+            url = self.__requester.absurl(self.url)
+            self.html = self.__requester.get(url)
+        return secure(self.html)
 
 
 class Series:
     def __init__(self, url):
         self.__requester = SeasonvarRequester()
-        self.__url = self.__requester.absurl(url)
-        self.__html = self.__requester.get(self.__url)
-        self.__seasons = None
+        absurl = self.__requester.absurl(url)
+        relurl = self.__requester.relurl(url)
+        self.__url = relurl
+        self.__html = self.__requester.get(absurl)
+        self.__current_season = None
 
-    @property
+    @cached_property
     def seasons(self):
-        if self.__seasons is None:
-            self.__seasons = list(self._seasons())
-        return self.__seasons
+        return list(self._seasons_from_html())
 
-    def _seasons(self):
-        regexp = re.compile(r'<a[^>]+?href="{0}"'.format(SEASON))
-        for (surl, sid, sname, snum) in regexp.findall(self.__html):
-            url = self.__requester.absurl(surl)
-            yield Season(url=url, id=sid, trname=sname, number=snum)
-
-    @property
+    @cached_property
     def current_season(self):
-        kwargs = url2season(self.__url)
-        kwargs['html'] = self.__html
-        return Season(**kwargs)
+        for season in self.seasons:
+            if season.url == self.__url:
+                season.html = self.__html
+                return season
+
+    def _seasons_from_html(self):
+        regexp = re.compile(r'<h2>.*?<a[^>]+?href="{0}"'.format(SEASON),
+                            re.DOTALL)
+        for num, (surl, sid) in enumerate(regexp.findall(self.__html), 1):
+            yield Season(url=surl, id=sid, number=num,
+                         requester=self.__requester)

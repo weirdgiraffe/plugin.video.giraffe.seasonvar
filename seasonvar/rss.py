@@ -7,7 +7,7 @@
 #
 # Distributed under terms of the MIT license.
 #
-
+from __future__ import unicode_literals
 try:
     from seasonvar.requester import Requester
 except ImportError:
@@ -32,6 +32,6 @@ def items():
             'entry': entry,
             'url': link,
             'date': datetime.strptime(
-                datestr,
-                '%a, %d %b %Y %H:%M:%S %z')
+                datestr[:-6],  # ignore timezone at the end
+                '%a, %d %b %Y %H:%M:%S')
         }
