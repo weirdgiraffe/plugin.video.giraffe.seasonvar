@@ -12,5 +12,5 @@ sys.path.append(os.path.join(__a.getAddonInfo('path'),
 
 
 if __name__ == '__main__':
-    from addon import plugin_video
-    plugin_video.main()
+    from addon.plugin_video import main
+    main()

@@ -1,0 +1,5 @@
+.gitignore export-ignore  
+.gitattributes export-ignore  
+requirements.txt export-ignore
+Makefile export-ignore  
+/tests export-ignore  

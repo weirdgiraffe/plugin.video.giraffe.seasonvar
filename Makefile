@@ -1,13 +1,16 @@
+ADDON=$(shell xmllint --xpath "//addon/@id" addon.xml | sed 's/^.*"\([^"]*\)"$$/\1/')
 VERSION=$(shell xmllint --xpath "//addon/@version" addon.xml | sed 's/^.*"\([^"]*\)"$$/\1/')
+BRANCH=$(shell git branch | sed '/^*/!d;s/\* //')
 zip:
-	$(RM) $(PWD)/plugin.video.me.seasonvar-$(VERSION).zip
-	git archive --format zip --prefix=plugin.video.me.seasonvar/ --output $(PWD)/plugin.video.me.seasonvar-$(VERSION).zip master
+	$(RM) $(PWD)/$(ADDON)-$(VERSION).zip
+	git archive --format zip --prefix=$(ADDON)/ --output $(PWD)/$(ADDON)-$(VERSION).zip $(BRANCH)
 
 localcleanup: zip
 	ssh localkodi "rm -rf ~/.kodi"
-	scp plugin.video.me.seasonvar-*.zip localkodi:
+	ssh localkodi "rm -rf ~/plugin.video.*.zip"
+	scp plugin.video.* localkodi:.
 
-localupdate:
-	scp -r resources/* localkodi:.kodi/addons/plugin.video.me.seasonvar/resources/
+localpush:
+	scp plugin.video.*.zip localkodi:.
 
 
