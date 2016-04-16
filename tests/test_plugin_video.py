@@ -12,6 +12,19 @@ import pytest
 assert pytest
 import re
 import addon.plugin_video as plugin_video
+from datetime import datetime, timedelta
+
+
+def assert_kodi_directory_item_is_dir(kodi_directory_item_mock):
+    assert kodi_directory_item_mock['is_dir'] is True
+
+
+def assert_kodi_directory_item_is_not_dir(kodi_directory_item_mock):
+    assert kodi_directory_item_mock['is_dir'] is False
+
+
+def assert_kodi_directory_item_has_thumb(kodi_directory_item_mock):
+    assert hasattr(kodi_directory_item_mock['li'], 'thumb')
 
 
 def check_item(item):
@@ -24,83 +37,95 @@ def check_thumb(item):
                     item['li'].thumb)
 
 
-def check_directory_item(item):
-    check_item(item)
-    assert item['is_dir'] is True
-
-
-def check_thumb_directory_item(item):
-    check_directory_item(item)
-    check_thumb(item)
-
-
-def check_thumb_item(item):
-    check_item(item)
-    check_thumb(item)
-
-
-def test_screen_start_has_search(requests_mock, addon, kodi):
+def test_screen_start_does_not_make_requestst(requests_mock, addon, kodi):
+    # if any request was made test will fail in requests_mock
     plugin_video.screen_start({})
-    assert len([x for x in kodi.items if x['li'].name == 'Поиск']) == 1
 
 
-def test_screen_start_search_is_the_last_item(requests_mock, addon, kodi):
-    plugin_video.screen_start({})
-    assert kodi.items[-1]['li'].name == u'Поиск'
-
-
-def test_screen_start_describes_a_week(requests_mock, addon, kodi):
+def test_screen_start_items_layout(requests_mock, addon, kodi):
+    # should return a list of 7 entries for
+    # last 7 days. and one entry for search
     plugin_video.screen_start({})
     assert len(kodi.items) == 8
-    assert len(set(x['li'].name for x in kodi.items)) == 8
+    checked_date = datetime.today()
+    for item in kodi.items[:-1]:
+        assert_kodi_directory_item_is_dir(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'screen_date'
+        assert 'date' in urlparams
+        datestr = checked_date.strftime('%d.%m.%Y')
+        assert urlparams['date'] == datestr
+        checked_date -= timedelta(days=1)
+    assert kodi.items[-1]['li'].name == 'Поиск'
 
 
-def test_screen_start_li_format(requests_mock, addon, kodi):
-    plugin_video.screen_start({})
-    # 7 date items from seasonvar site
-    # 1 for search
-    for i in kodi.items:
-        check_directory_item(i)
-        assert i['count'] is None
-
-
-def test_screen_date_bad_params(requests_mock, addon, kodi):
-    requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
-                          'assets/rss01.xml')
+def test_screen_date_should_handle_bad_params(requests_mock, addon, kodi):
     plugin_video.screen_date({})
     assert len(kodi.items) == 0
     plugin_video.screen_date({'date': 'hello'})
     assert len(kodi.items) == 0
 
 
-def test_screen_date(requests_mock, addon, kodi):
+def test_screen_date_items_layout(requests_mock, addon, kodi):
     requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
                           'assets/rss01.xml')
     plugin_video.screen_date({'date': '12.04.2016'})
     assert len(kodi.items) == 3
-    for i in kodi.items:
-        check_thumb_directory_item(i)
+    for item in kodi.items:
+        assert_kodi_directory_item_is_dir(item)
+        assert_kodi_directory_item_has_thumb(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'screen_episodes'
+        assert 'url' in urlparams
+        # urls for screen_episodes should be relative
+        assert urlparams['url'].find('/') == 0
 
 
-def test_screen_episodes_bad_params(requests_mock, addon, kodi):
+def test_screen_episodes_should_handle_bad_params(requests_mock, addon, kodi):
     plugin_video.screen_episodes({})
     assert len(kodi.items) == 0
 
 
-def test_screen_episodes(requests_mock, addon, kodi):
+def test_screen_episodes_items_layout(requests_mock, addon, kodi):
     requests_mock.respond(r'seasonvar.ru\/.*Skorpion.*\.html$',
                           'assets/scorpion.html')
     requests_mock.respond(r'seasonvar.ru\/playls2.*12394/list\.xml$',
                           'assets/playlist_scorpion.json')
+
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
     plugin_video.screen_episodes({'url': seasonurl})
+
     assert len(kodi.items) == 23
+
+    for item in kodi.items[1:]:
+        assert_kodi_directory_item_is_not_dir(item)
+        assert_kodi_directory_item_has_thumb(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'play'
+        assert 'IsPlayable' in item['li'].properties
+        assert item['li'].properties['IsPlayable'] == 'True'
+        assert 'url' in urlparams
+        # urls for screen_episodes should be absolute
+        assert urlparams['url'].find('/') != 0
+
+    assert_kodi_directory_item_is_dir(kodi.items[0])
     assert kodi.items[0]['li'].name == u'сезон 2/2'
-    for i in kodi.items[1:]:
-        check_thumb_item(i)
+    assert 'action' in kodi.items[0]['urlparams']
+    assert 'url' in kodi.items[0]['urlparams']
+    assert kodi.items[0]['urlparams']['action'] == 'screen_seasons'
+    # urls for screen_seasons should be relative
+    assert kodi.items[0]['urlparams']['url'].find('/') == 0
 
 
-def test_screen_seasons(requests_mock, addon, kodi):
+def test_screen_seasons_should_handle_bad_params(requests_mock, addon, kodi):
+    plugin_video.screen_seasons({})
+    assert len(kodi.items) == 0
+
+
+def test_screen_seasons_items_layout(requests_mock, addon, kodi):
     requests_mock.respond(r'seasonvar.ru\/.*Skorpion.*\.html$',
                           'assets/scorpion.html')
     requests_mock.respond(r'seasonvar.ru\/playls2.*12394/list\.xml$',
@@ -108,7 +133,29 @@ def test_screen_seasons(requests_mock, addon, kodi):
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
     plugin_video.screen_seasons({'url': seasonurl})
     assert len(kodi.items) == 2
-    for i in kodi.items:
-        check_thumb_directory_item(i)
+    for item in kodi.items:
+        assert_kodi_directory_item_is_dir(item)
+        assert_kodi_directory_item_has_thumb(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'screen_episodes'
+        assert 'url' in urlparams
+        # urls for screen_episodes should be relative
+        assert urlparams['url'].find('/') == 0
+
     assert kodi.items[0]['li'].name == 'сезон 1'
     assert kodi.items[1]['li'].name == '* сезон 2'
+
+
+def test_play_should_handle_bad_params(requests_mock, addon, kodi):
+    plugin_video.play({})
+    assert len(kodi.items) == 0
+    assert hasattr(kodi, 'resolved') is False
+
+
+def test_play_items_layout(requests_mock, addon, kodi):
+    testurl = 'http://hello'
+    plugin_video.play({'url': testurl})
+    assert len(kodi.items) == 0
+    assert hasattr(kodi, 'resolved')
+    assert kodi.resolved.path == testurl

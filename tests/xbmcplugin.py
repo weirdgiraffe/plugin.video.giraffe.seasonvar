@@ -15,3 +15,7 @@ def addDirectoryItem(*args):
 
 def endOfDirectory(*args):
     pass
+
+
+def setResolvedUrl(*args):
+    pass
