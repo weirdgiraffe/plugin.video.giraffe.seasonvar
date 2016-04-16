@@ -1,0 +1,5 @@
+version 0.1
+basic functionality:
+- display one week
+- seasons choosing
+- play episodes

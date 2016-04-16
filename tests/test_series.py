@@ -32,7 +32,7 @@ def test_episodes_playlist_extracted(requests_mock):
     requests_mock.respond(r'http:\/\/seasonvar\.ru\/.*Skorpion.*\.html$',
                           'assets/scorpion.html')
     requests_mock.respond(r'playls2.*12394/list\.xml$',
-                          'assets/playlist_scorpion.json')
+                          'assets/playlist-scorpion.json')
     baseurl = 'http://seasonvar.ru'
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
     series = Series(urljoin(baseurl, seasonurl))

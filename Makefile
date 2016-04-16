@@ -5,7 +5,7 @@ zip:
 	$(RM) $(PWD)/$(ADDON)-$(VERSION).zip
 	git archive --format zip --prefix=$(ADDON)/ --output $(PWD)/$(ADDON)-$(VERSION).zip $(BRANCH)
 
-cleanup:
+clean:
 	$(RM) resources/site-packages/*.pyc
 	$(RM) -r resources/site-packages/__pycache__
 	$(RM) resources/site-packages/addon/*.pyc
@@ -14,13 +14,14 @@ cleanup:
 	$(RM) -r resources/site-packages/seasonvar/__pycache__
 	$(RM) tests/*.pyc
 	$(RM) -r tests/__pycache__
+	$(RM) -r tests/.cache
 
 localcleanup: zip
 	ssh localkodi "rm -rf ~/.kodi"
 	ssh localkodi "rm -rf ~/plugin.video.*.zip"
 	scp plugin.video.* localkodi:.
 
-localpush: cleanup
+localpush: clean
 	scp -r resources/site-packages/* localkodi:.kodi/addons/$(ADDON)/resources/site-packages/
 
 

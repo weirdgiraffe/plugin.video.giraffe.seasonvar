@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding: utf-8
 # vim:fenc=utf-8:sts=0:ts=4:sw=4:et:tw=80
 
@@ -60,16 +59,14 @@ def test_screen_start_items_layout(requests_mock, addon, kodi):
     assert kodi.items[-1]['li'].name == 'Поиск'
 
 
-def test_screen_date_should_handle_bad_params(requests_mock, addon, kodi):
+def test_screen_date_missing_params(requests_mock, addon, kodi):
     plugin_video.screen_date({})
     assert len(kodi.items) == 0
-    plugin_video.screen_date({'date': 'hello'})
-    assert len(kodi.items) == 0
 
 
-def test_screen_date_items_layout(requests_mock, addon, kodi):
+def test_screen_date_items_layout_from_rss(requests_mock, addon, kodi):
     requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
-                          'assets/rss01.xml')
+                          'assets/rss-01.xml')
     plugin_video.screen_date({'date': '12.04.2016'})
     assert len(kodi.items) == 3
     for item in kodi.items:
@@ -83,7 +80,25 @@ def test_screen_date_items_layout(requests_mock, addon, kodi):
         assert urlparams['url'].find('/') == 0
 
 
-def test_screen_episodes_should_handle_bad_params(requests_mock, addon, kodi):
+def test_screen_date_items_layout_from_mainpage(requests_mock, addon, kodi):
+    requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
+                          'assets/rss-01.xml')
+    requests_mock.respond(r'http:\/\/seasonvar.ru$',
+                          'assets/page-main-01.html')
+    plugin_video.screen_date({'date': '11.04.2016'})
+    assert len(kodi.items) == 3
+    for item in kodi.items:
+        assert_kodi_directory_item_is_dir(item)
+        assert_kodi_directory_item_has_thumb(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'screen_episodes'
+        assert 'url' in urlparams
+        # urls for screen_episodes should be relative
+        assert urlparams['url'].find('/') == 0
+
+
+def test_screen_episodes_missing_params(requests_mock, addon, kodi):
     plugin_video.screen_episodes({})
     assert len(kodi.items) == 0
 
@@ -92,7 +107,7 @@ def test_screen_episodes_items_layout(requests_mock, addon, kodi):
     requests_mock.respond(r'seasonvar.ru\/.*Skorpion.*\.html$',
                           'assets/scorpion.html')
     requests_mock.respond(r'seasonvar.ru\/playls2.*12394/list\.xml$',
-                          'assets/playlist_scorpion.json')
+                          'assets/playlist-scorpion.json')
 
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
     plugin_video.screen_episodes({'url': seasonurl})
@@ -120,7 +135,7 @@ def test_screen_episodes_items_layout(requests_mock, addon, kodi):
     assert kodi.items[0]['urlparams']['url'].find('/') == 0
 
 
-def test_screen_seasons_should_handle_bad_params(requests_mock, addon, kodi):
+def test_screen_seasons_missing_params(requests_mock, addon, kodi):
     plugin_video.screen_seasons({})
     assert len(kodi.items) == 0
 
@@ -147,7 +162,7 @@ def test_screen_seasons_items_layout(requests_mock, addon, kodi):
     assert kodi.items[1]['li'].name == '* сезон 2'
 
 
-def test_play_should_handle_bad_params(requests_mock, addon, kodi):
+def test_play_missing_params(requests_mock, addon, kodi):
     plugin_video.play({})
     assert len(kodi.items) == 0
     assert hasattr(kodi, 'resolved') is False
