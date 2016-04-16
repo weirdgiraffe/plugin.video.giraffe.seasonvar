@@ -17,5 +17,4 @@ from kodi_mock import addon, kodi
 assert addon
 assert kodi
 
-sys.path.append(os.path.join(os.getcwd(), '.'))
-sys.path.append(os.path.join(os.getcwd(), '..'))
+sys.path.append(os.path.join(os.getcwd(), './resources/site-packages'))

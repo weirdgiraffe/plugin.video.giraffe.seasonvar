@@ -7,7 +7,7 @@
 #
 # Distributed under terms of the MIT license.
 #
-
+from __future__ import unicode_literals
 import pytest
 assert pytest
 import re
@@ -41,12 +41,12 @@ def check_thumb_item(item):
 
 def test_screen_start_has_search(requests_mock, addon, kodi):
     plugin_video.screen_start({})
-    assert len(x for x in kodi.items if x['li'].name == u'Поиск') == 1
+    assert len([x for x in kodi.items if x['li'].name == 'Поиск']) == 1
 
 
 def test_screen_start_search_is_the_last_item(requests_mock, addon, kodi):
     plugin_video.screen_start({})
-    assert kodi.irems[-1]i['li'].name == u'Поиск'
+    assert kodi.items[-1]['li'].name == u'Поиск'
 
 
 def test_screen_start_describes_a_week(requests_mock, addon, kodi):
