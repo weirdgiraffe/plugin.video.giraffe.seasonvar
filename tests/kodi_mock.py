@@ -10,6 +10,7 @@
 import pytest
 import logging
 
+
 class Addon:
     def __init__(self, id):
         self.handler = 123
@@ -40,6 +41,7 @@ class ListItem:
         self.thumb = url
 
     def setIconImage(self, url): self.setArt(url)
+
     def setThumbnailImage(self, url): self.setArt(url)
 
 
@@ -50,7 +52,10 @@ class Kodi:
     def ListItem(self, name):
         return ListItem(name)
 
-    def addDirectoryItem(self, handler, url, li, is_dir, count=None):
+    def addDirectoryItem(self, handler, url, li, is_dir, count=-1):
+        assert isinstance(count, int)
+        if count == -1:
+            count = None
         self.items.append({'handler': handler,
                            'url': url,
                            'li': li,
