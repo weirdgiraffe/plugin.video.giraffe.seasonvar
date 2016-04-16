@@ -12,10 +12,6 @@ import pytest
 assert pytest
 import re
 import addon.plugin_video as plugin_video
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
 
 
 def check_item(item):
@@ -55,7 +51,8 @@ def test_screen_start(requests_mock, addon, kodi):
 
 
 def test_screen_date_bad_params(requests_mock, addon, kodi):
-    requests_mock.respond(r'seasonvar.ru\/rss\.php$', 'assets/rss01.xml')
+    requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
+                          'assets/rss01.xml')
     plugin_video.screen_date({})
     assert len(kodi.items) == 0
     plugin_video.screen_date({'date': 'hello'})
@@ -63,7 +60,8 @@ def test_screen_date_bad_params(requests_mock, addon, kodi):
 
 
 def test_screen_date(requests_mock, addon, kodi):
-    requests_mock.respond(r'seasonvar.ru\/rss\.php$', 'assets/rss01.xml')
+    requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
+                          'assets/rss01.xml')
     plugin_video.screen_date({'date': '12.04.2016'})
     assert len(kodi.items) == 3
     for i in kodi.items:
@@ -88,11 +86,15 @@ def test_screen_episodes(requests_mock, addon, kodi):
         check_thumb_item(i)
 
 
-# def test_screen_date(requests_mock, addon, kodi):
-#     requests_mock.respond(r'seasonvar.ru$', 'tests/samples/main_page.html')
-#     seasonvar = Seasonvar()
-#     plugin_video.screen_episodes({'name': 'Агентство Лунный Свет'}, seasonvar)
-#     assert len(kodi.items) > 0
-#     for i in kodi.items:
-#         check_thumb_directory_item(i)
-#     pprint.pprint(kodi.items)
+def test_screen_seasons(requests_mock, addon, kodi):
+    requests_mock.respond(r'seasonvar.ru\/.*Skorpion.*\.html$',
+                          'assets/scorpion.html')
+    requests_mock.respond(r'seasonvar.ru\/playls2.*12394/list\.xml$',
+                          'assets/playlist_scorpion.json')
+    seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
+    plugin_video.screen_seasons({'url': seasonurl})
+    assert len(kodi.items) == 2
+    for i in kodi.items:
+        check_thumb_directory_item(i)
+    assert kodi.items[0]['li'].name == 'сезон 1'
+    assert kodi.items[1]['li'].name == '* сезон 2'

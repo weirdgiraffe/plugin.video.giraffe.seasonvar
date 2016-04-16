@@ -122,20 +122,30 @@ def screen_episodes(args):
     list_end()
 
 
-def screen_seasons(args, seasonvar):
-    name = args.get('name')
-    if name is None:
-        logger.error('screen_seasons: "name" arg is missing {0}'.format(args))
+def screen_seasons(args):
+    try:
+        url = args.get('url')
+        if url is None:
+            raise TypeError()
+        series = Series(url)
+    except HTTPError as e:
+        logger.error(e)
         return
-    series = seasonvar.series(name)
-    if series is None:
-        logger.error('screen_seasons: not found {0}'.format(name))
+    except NetworkError as e:
+        logger.error(e)
+        return
+    except TypeError:
+        logger.error('screen_episodes: "url" arg is missing {0}'.format(args))
         return
     for season in series.seasons:
-        add_item_to_list(
-            u'сезон {0}'.format(season.number),
-            season['name'],
-            {'action': 'screen_episodes', 'season': season.number}
+        if season.number == series.current_season.number:
+            prefix = u'* '
+        else:
+            prefix = u''
+        add_directory_to_list(
+            u'{0}сезон {1}'.format(prefix, season.number),
+            addon.make_url({'action': 'screen_episodes', 'url': season.url}),
+            thumb=season.thumb
         )
     list_end()
 

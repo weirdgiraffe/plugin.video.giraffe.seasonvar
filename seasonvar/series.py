@@ -60,16 +60,23 @@ class Season:
         playlist_url = 'http://seasonvar.ru/playls2/{0}x/trans/{1}/'\
                        'list.xml'.format(self.secure, self.id)
         playlist = self.__requester.get_json(playlist_url)
-        for episode in playlist['playlist']:
-            yield {'url': episode['file'],
-                   'name': episode['comment'],
-                   'thumb': self.thumb}
+        return list(self._playlist_entries(playlist))
 
-    @property
+    def _playlist_entries(self, playlist_dict):
+        playlist = playlist_dict['playlist']
+        for entry in playlist:
+            if 'playlist' in entry:
+                for episode in entry['playlist']:
+                    yield {'url': episode['file'],
+                           'name': episode['comment'],
+                           'thumb': self.thumb}
+            else:
+                yield {'url': entry['file'],
+                       'name': entry['comment'],
+                       'thumb': self.thumb}
+
+    @cached_property
     def secure(self):
-        if self.html is None:
-            url = self.__requester.absurl(self.url)
-            self.html = self.__requester.get(url)
         return secure(self.html)
 
 

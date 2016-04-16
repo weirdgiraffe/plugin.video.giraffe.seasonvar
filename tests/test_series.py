@@ -17,7 +17,7 @@ except ImportError:
 
 
 def test_episodes_current_season_extracted(requests_mock):
-    requests_mock.respond(r'Skorpion.*\.html$',
+    requests_mock.respond(r'http:\/\/seasonvar\.ru\/.*Skorpion.*\.html$',
                           'assets/scorpion.html')
     baseurl = 'http://seasonvar.ru'
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
@@ -35,12 +35,25 @@ def test_episodes_playlist_extracted(requests_mock):
                           'assets/playlist_scorpion.json')
     baseurl = 'http://seasonvar.ru'
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
-    print urljoin(baseurl, seasonurl)
     series = Series(urljoin(baseurl, seasonurl))
-    episodes = list(series.current_season.episodes)
+    episodes = series.current_season.episodes
     assert len(episodes) == 22
     for e in episodes:
         assert e['url'] is not None
         assert e['name'] is not None
         assert e['thumb'] is not None
 
+
+def test_episodes_mixed_playlist_extracted(requests_mock):
+    requests_mock.respond(r'http:\/\/seasonvar\.ru\/.*Dom-2.*\.html$',
+                          'assets/page-dom2.html')
+    requests_mock.respond(r'http:\/\/seasonvar\.ru\/.*11087\/list.xml',
+                          'assets/playlist-dom2.json')
+    seasonurl = '/serial-11087-Dom-2_Gorod_lyubvi_2015.html'
+    series = Series(seasonurl)
+    episodes = series.current_season.episodes
+    assert len(episodes) == 462
+    for e in episodes:
+        assert e['url'] is not None
+        assert e['name'] is not None
+        assert e['thumb'] is not None
