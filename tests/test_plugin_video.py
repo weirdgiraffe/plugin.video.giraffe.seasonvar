@@ -11,6 +11,7 @@ import pytest
 assert pytest
 import re
 import addon.plugin_video as plugin_video
+from seasonvar.requester import NetworkError
 from datetime import datetime, timedelta
 
 
@@ -41,6 +42,12 @@ def test_screen_start_does_not_make_requestst(requests_mock, addon, kodi):
     plugin_video.screen_start({})
 
 
+def strip_colors(instr):
+    return re.sub(r'\[COLOR [A-F0-9]{8}\](.+?)\[\/COLOR\]',
+                  r'\1',
+                  instr)
+
+
 def test_screen_start_items_layout(requests_mock, addon, kodi):
     # should return a list of 7 entries for
     # last 7 days. and one entry for search
@@ -56,7 +63,7 @@ def test_screen_start_items_layout(requests_mock, addon, kodi):
         datestr = checked_date.strftime('%d.%m.%Y')
         assert urlparams['date'] == datestr
         checked_date -= timedelta(days=1)
-    assert kodi.items[-1]['li'].name == 'Поиск'
+    assert strip_colors(kodi.items[-1]['li'].name) == 'поиск'
 
 
 def test_screen_date_missing_params(requests_mock, addon, kodi):
@@ -127,7 +134,7 @@ def test_screen_episodes_items_layout(requests_mock, addon, kodi):
         assert urlparams['url'].find('/') != 0
 
     assert_kodi_directory_item_is_dir(kodi.items[0])
-    assert kodi.items[0]['li'].name == u'сезон 2/2'
+    assert strip_colors(kodi.items[0]['li'].name) == u'сезон: 2 / 2'
     assert 'action' in kodi.items[0]['urlparams']
     assert 'url' in kodi.items[0]['urlparams']
     assert kodi.items[0]['urlparams']['action'] == 'screen_seasons'
@@ -174,3 +181,36 @@ def test_play_items_layout(requests_mock, addon, kodi):
     assert len(kodi.items) == 0
     assert hasattr(kodi, 'resolved')
     assert kodi.resolved.path == testurl
+
+
+def test_main_handle_network_exception(requests_mock,
+                                       addon, kodi, monkeypatch):
+    def raise_network_error(*args, **kwargs):
+        raise NetworkError()
+
+    monkeypatch.setattr('seasonvar.requester.Requester._get',
+                        raise_network_error)
+
+    addon.args['action'] = 'screen_date'
+    addon.args['date'] = '12.04.2016'
+    plugin_video.main()
+    assert addon.notification_shown
+
+    addon.notification_shown = False
+    addon.args['action'] = 'screen_date'
+    addon.args['date'] = '11.04.2016'
+    plugin_video.main()
+    assert addon.notification_shown
+
+    seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
+    addon.notification_shown = False
+    addon.args['action'] = 'screen_episodes'
+    addon.args['url'] = seasonurl
+    plugin_video.main()
+    assert addon.notification_shown
+
+    addon.notification_shown = False
+    addon.args['action'] = 'screen_seasons'
+    addon.args['url'] = seasonurl
+    plugin_video.main()
+    assert addon.notification_shown

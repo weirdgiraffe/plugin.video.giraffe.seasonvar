@@ -19,7 +19,7 @@ except ImportError:
 
 
 class Addon:
-    def __init__(self, id):
+    def __init__(self):
         self.handler = 123
         self.url = 'plugin://{0}/'.format(id)
         self.args = {}
@@ -31,13 +31,23 @@ class Addon:
         self.author = 'addon-author'
         self.name = 'addon-name'
         self.version = 'addon-version'
+        self.notification_shown = False
+
+    def show_notification(self, *args, **kwargs):
+        self.notification_shown = True
 
 
 @pytest.fixture()
 def addon(monkeypatch):
-    monkeypatch.setattr('addon.common.Addon.handler', 123)
+    a = Addon()
+    monkeypatch.setattr('addon.common.Addon.handler', a.handler)
+    monkeypatch.setattr('addon.common.Addon.args', a.args)
+    monkeypatch.setattr('addon.common.Addon.icon', a.icon)
+    monkeypatch.setattr('addon.common.show_notification', a.show_notification)
+    monkeypatch.setattr('addon.plugin_video.show_notification',
+                        a.show_notification)
     monkeypatch.setattr('addon.plugin_video.logger', logging.getLogger('test'))
-    print('patched')
+    return a
 
 
 class ListItem:
