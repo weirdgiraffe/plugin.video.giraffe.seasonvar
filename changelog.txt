@@ -3,4 +3,4 @@ basic functionality:
 - display one week
 - seasons choosing
 - play episodes
-- search
+- search series
