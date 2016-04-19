@@ -1,6 +1,8 @@
 
 # Плагин для просмотра [seasonvar.ru](http://seasonvar.ru)
 
+[![Build Status](https://travis-ci.org/weirdgiraffe/plugin.video.giraffe.seasonvar.svg?branch=master)](https://travis-ci.org/weirdgiraffe/plugin.video.giraffe.seasonvar)
+
 Плагин реализует довольно простой функционал:
 
 - отображение обновлений за последнюю неделю
