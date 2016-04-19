@@ -1,5 +1,8 @@
+.travis.yml export-ignore  
 .gitignore export-ignore  
 .gitattributes export-ignore  
 requirements.txt export-ignore
 Makefile export-ignore  
+README.MD export-ignore  
 /tests export-ignore  
+/screenshots export-ignore  
