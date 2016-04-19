@@ -14,7 +14,7 @@
 
 # Установка
 
-- Просто добавьте в репозитории [repository.giraffe.zip](https://weirdgiraffe.github.io/kodi.addon.repo/repository.giraffe.zip)
+- Просто добавьте в репозитории [repository.giraffe.zip](https://github.com/weirdgiraffe/kodi.addon.repo/raw/master/repository.giraffe.zip)
 
 # Скриншоты
 
