@@ -21,7 +21,7 @@
 ![](screenshots/main.png)
 ![](screenshots/day.png)
 ![](screenshots/episodes.png)
-![](screenshots/seasons.png)
+![](screenshots/season.png)
 ![](screenshots/search.png)
 ![](screenshots/search-results.png)
 
