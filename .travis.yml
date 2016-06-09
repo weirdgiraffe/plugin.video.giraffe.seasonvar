@@ -3,6 +3,9 @@ python:
   - "2.6"
 install: "pip install -r requirements.txt"
 script: python -m py.test tests
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 branches:
   only:
     - master
+
