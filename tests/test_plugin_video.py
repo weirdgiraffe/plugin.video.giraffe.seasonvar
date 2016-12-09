@@ -71,22 +71,6 @@ def test_screen_date_missing_params(requests_mock, addon, kodi):
     assert len(kodi.items) == 0
 
 
-def test_screen_date_items_layout_from_rss(requests_mock, addon, kodi):
-    requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
-                          'assets/rss-01.xml')
-    plugin_video.screen_date({'date': '12.04.2016'})
-    assert len(kodi.items) == 3
-    for item in kodi.items:
-        assert_kodi_directory_item_is_dir(item)
-        assert_kodi_directory_item_has_thumb(item)
-        urlparams = item['urlparams']
-        assert 'action' in urlparams
-        assert urlparams['action'] == 'screen_episodes'
-        assert 'url' in urlparams
-        # urls for screen_episodes should be relative
-        assert urlparams['url'].find('/') == 0
-
-
 def test_screen_date_items_layout_from_mainpage(requests_mock, addon, kodi):
     requests_mock.respond(r'http:\/\/seasonvar.ru\/rss\.php$',
                           'assets/rss-01.xml')
