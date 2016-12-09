@@ -19,9 +19,17 @@ def test_search_no_results(requests_mock):
     assert l[0]['url'] is None
 
 
+def test_search_cyrilic(requests_mock):
+    requests_mock.respond(r'.*', 'assets/search-cyrilic.json')
+    l = list(items('привет'))
+    assert len(l) == 8
+    for i in l:
+        assert i['url'] is not None
+
+
 def test_search_results(requests_mock):
-     requests_mock.respond(r'.*', 'assets/search-bone-results.json')
-     l = list(items('bone'))
-     assert len(l) == 18
-     for i in l:
-         assert i['url'] is not None
+    requests_mock.respond(r'.*', 'assets/search-bone-results.json')
+    l = list(items('bone'))
+    assert len(l) == 18
+    for i in l:
+        assert i['url'] is not None
