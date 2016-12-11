@@ -1,6 +1,10 @@
-version 0.1
+version 0.0.1
 basic functionality:
 - display one week
 - seasons choosing
 - play episodes
 - search series
+version 0.0.2
+- remove rss source to not display not playable content
+version 0.0.3
+- fix cyrilic issues in search
