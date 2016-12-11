@@ -6,7 +6,6 @@
 #
 # Distributed under terms of the MIT license.
 #
-from __future__ import unicode_literals
 import pytest
 assert pytest
 from seasonvar.search import items
@@ -21,7 +20,8 @@ def test_search_no_results(requests_mock):
 
 def test_search_cyrilic(requests_mock):
     requests_mock.respond(r'.*', 'assets/search-cyrilic.json')
-    l = list(items('привет'))
+    term = 'привет'
+    l = list(items(term))
     assert len(l) == 8
     for i in l:
         assert i['url'] is not None
