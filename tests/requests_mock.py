@@ -11,6 +11,10 @@ import pytest
 import json
 import os
 import re
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 
 def memoize(f):
@@ -52,7 +56,9 @@ class RequestsMock:
         for m in methods:
             self.responses[m] += [(re.compile(url_regexp), path, code)]
 
-    def get(self, url, *args, **kwargs):
+    def get(self, fullurl, *args, **kwargs):
+        o = urlparse(fullurl)
+        url =  o.scheme + "://" + o.netloc + o.path
         for regexp, path, status in self.responses['GET']:
             if regexp.search(url):
                 print('mock for url:{0} - {1}'.format(url, path))
