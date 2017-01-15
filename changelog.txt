@@ -9,4 +9,5 @@ version 0.0.2
 version 0.0.3
 - fix cyrilic issues in search
 version 0.0.4
+version 0.0.5
 - fix seasonvar api
