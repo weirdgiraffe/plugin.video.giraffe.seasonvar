@@ -8,3 +8,5 @@ version 0.0.2
 - remove rss source to not display not playable content
 version 0.0.3
 - fix cyrilic issues in search
+version 0.0.4
+- fix seasonvar api
