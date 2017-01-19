@@ -10,6 +10,10 @@ version 0.0.3
 - fix cyrilic issues in search
 version 0.0.4
 version 0.0.5
-- fix seasonvar api
 version 0.1.0
-- refactor and fix api changes
+- refactor and fix api changes(not really)
+version 0.1.1
+- restore functionality
+- refactoring
+- add more tests(and online tests)
+
