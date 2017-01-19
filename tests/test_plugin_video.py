@@ -96,8 +96,8 @@ def test_screen_episodes_missing_params(requests_mock, addon, kodi):
 
 def test_screen_episodes_items_layout(requests_mock, addon, kodi):
     requests_mock.respond(r'seasonvar.ru\/.*Skorpion.*\.html$',
-                          'assets/scorpion.html')
-    requests_mock.respond(r'seasonvar.ru\/playls2.*12394/list\.xml$',
+                          'assets/scorpion2.html')
+    requests_mock.respond(r'seasonvar.ru\/playls2.*/list\.xml.*$',
                           'assets/playlist-scorpion.json')
 
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
@@ -118,7 +118,7 @@ def test_screen_episodes_items_layout(requests_mock, addon, kodi):
         assert urlparams['url'].find('/') != 0
 
     assert_kodi_directory_item_is_dir(kodi.items[0])
-    assert strip_colors(kodi.items[0]['li'].name) == u'сезон: 2 / 2'
+    assert strip_colors(kodi.items[0]['li'].name) == u'сезон: 2 / 3'
     assert 'action' in kodi.items[0]['urlparams']
     assert 'url' in kodi.items[0]['urlparams']
     assert kodi.items[0]['urlparams']['action'] == 'screen_seasons'
