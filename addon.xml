@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.giraffe.seasonvar"
        name="[COLOR FF7B68EE]giraffe.[/COLOR][COLOR FFFFD700]Seasonvar[/COLOR]"
-       version="0.1.1"
+       version="0.1.2"
        provider-name="weirdgiraffe">
   <requires>
     <import addon="xbmc.python" version="2.20.0"/>
@@ -12,9 +12,9 @@
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary lang="en">giraffe. Seasonvar plugin.</summary>
-    <description lang="en">simply play episodes from seasonvar.ru</description>
+    <description lang="en">Simply play episodes from seasonvar.ru. Got an issue? - Check addon page at https://github.com/weirdgiraffe/plugin.video.giraffe.seasonvar</description>
     <platform>all</platform>
     <language>en</language>
-    <disclaimer> report any issues with this addon to giraffeoncode@gmail.com</disclaimer>
+    <disclaimer> report any issues with this addon to giraffe@cyberzoo.xyz</disclaimer>
   </extension>
 </addon>
