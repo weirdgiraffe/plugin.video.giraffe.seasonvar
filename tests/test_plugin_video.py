@@ -197,3 +197,45 @@ def test_main_handle_network_exception(requests_mock,
     addon.args['url'] = seasonurl
     plugin_video.main()
     assert addon.notification_shown
+
+
+def test_search_screen_latin(requests_mock, addon, kodi, monkeypatch):
+    requests_mock.respond(
+        r'seasonvar.ru\/autocomplete.php',
+        'assets/search-bone-results.json')
+    plugin_video.display_search_items('bone')
+    assert len(kodi.items) > 1
+    for item in kodi.items:
+        assert_kodi_directory_item_is_dir(item)
+        assert_kodi_directory_item_has_thumb(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'screen_episodes'
+        assert 'url' in urlparams
+        # urls for screen_episodes should be relative
+        assert urlparams['url'].find('/') == 0
+
+
+def test_search_screen_cyrilic(requests_mock, addon, kodi, monkeypatch):
+    requests_mock.respond(
+        r'seasonvar.ru\/autocomplete.php',
+        'assets/search-cyrilic.json')
+    plugin_video.display_search_items('при')
+    assert len(kodi.items) > 1
+    for item in kodi.items:
+        assert_kodi_directory_item_is_dir(item)
+        assert_kodi_directory_item_has_thumb(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'screen_episodes'
+        assert 'url' in urlparams
+        # urls for screen_episodes should be relative
+        assert urlparams['url'].find('/') == 0
+
+
+def test_search_screen_nothig(requests_mock, addon, kodi, monkeypatch):
+    requests_mock.respond(
+        r'seasonvar.ru\/autocomplete.php',
+        'assets/search-no-results.json')
+    plugin_video.display_search_items('при')
+    assert len(kodi.items) == 0
