@@ -1,20 +1,17 @@
-#!/usr/bin/env python
 # coding: utf-8
-# vim:fenc=utf-8:sts=0:ts=4:sw=4:et:tw=80
 
 #
-# Copyright © 2016 gr4ph3 <giraffeoncode@gmail.com>
+# Copyright © 2017 weirdgiraffe <giraffe@cyberzoo.xyz>
 #
 # Distributed under terms of the MIT license.
 #
 from __future__ import unicode_literals
-import pytest
 import logging
+import pytest
 import re
 try:
     from urlparse import parse_qsl, urlparse
-except ImportError:
-    # to be python3 compatible (not for kodi)
+except ImportError:  # to be python3 compatible (not for kodi)
     from urllib.parse import parse_qsl, urlparse
 
 

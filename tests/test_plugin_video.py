@@ -1,18 +1,17 @@
 # coding: utf-8
-# vim:fenc=utf-8:sts=0:ts=4:sw=4:et:tw=80
 
 #
-# Copyright © 2016 gr4ph3 <giraffeoncode@gmail.com>
+# Copyright © 2017 weirdgiraffe <giraffe@cyberzoo.xyz>
 #
 # Distributed under terms of the MIT license.
 #
 from __future__ import unicode_literals
-import pytest
-assert pytest
-import re
 import addon.plugin_video as plugin_video
-from seasonvar.requester import NetworkError
+import pytest
+import re
 from datetime import datetime, timedelta
+from seasonvar.requester import NetworkError
+assert pytest
 
 
 def assert_kodi_directory_item_is_dir(kodi_directory_item_mock):

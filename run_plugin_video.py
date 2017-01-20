@@ -1,5 +1,12 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+# coding: utf-8
+
+#
+# Copyright © 2017 weirdgiraffe <giraffe@cyberzoo.xyz>
+#
+# Distributed under terms of the MIT license.
+#
+from __future__ import unicode_literals
 import sys
 import os
 import xbmcaddon

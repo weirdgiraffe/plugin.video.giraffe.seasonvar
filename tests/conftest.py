@@ -1,19 +1,19 @@
-#!/usr/bin/env python
 # coding: utf-8
-# vim:fenc=utf-8:sts=0:ts=4:sw=4:et:tw=80
 
 #
-# Copyright © 2016 gr4ph3 <giraffeoncode@gmail.com>
+# Copyright © 2017 weirdgiraffe <giraffe@cyberzoo.xyz>
 #
 # Distributed under terms of the MIT license.
 #
+from __future__ import unicode_literals
 import os
-import sys
 import pytest
-assert pytest
-from requests_mock import requests_mock
-assert requests_mock
+import sys
 from kodi_mock import addon, kodi
+from requests_mock import requests_mock
+
+assert requests_mock
+assert pytest
 assert addon
 assert kodi
 
