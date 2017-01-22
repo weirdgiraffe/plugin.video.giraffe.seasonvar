@@ -102,9 +102,9 @@ def test_screen_episodes_items_layout(requests_mock, addon, kodi):
     seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
     plugin_video.screen_episodes({'url': seasonurl})
 
-    assert len(kodi.items) == 23
+    assert len(kodi.items) == 24
 
-    for item in kodi.items[1:]:
+    for item in kodi.items[2:]:
         assert_kodi_directory_item_is_not_dir(item)
         assert_kodi_directory_item_has_thumb(item)
         urlparams = item['urlparams']
@@ -117,12 +117,50 @@ def test_screen_episodes_items_layout(requests_mock, addon, kodi):
         assert urlparams['url'].find('/') != 0
 
     assert_kodi_directory_item_is_dir(kodi.items[0])
-    assert strip_colors(kodi.items[0]['li'].name) == u'сезон: 2 / 3'
+    assert strip_colors(kodi.items[0]['li'].name) == 'сезон: 2 / 3'
     assert 'action' in kodi.items[0]['urlparams']
     assert 'url' in kodi.items[0]['urlparams']
     assert kodi.items[0]['urlparams']['action'] == 'screen_seasons'
     # urls for screen_seasons should be relative
     assert kodi.items[0]['urlparams']['url'].find('/') == 0
+
+    assert_kodi_directory_item_is_dir(kodi.items[1])
+    assert strip_colors(kodi.items[1]['li'].name) == 'озвучка: Стандартная'
+    assert 'action' in kodi.items[1]['urlparams']
+    assert 'url' in kodi.items[1]['urlparams']
+    assert kodi.items[1]['urlparams']['action'] == 'screen_translations'
+    # urls for screen_seasons should be relative
+    assert kodi.items[1]['urlparams']['url'].find('/') == 0
+
+
+def test_screen_translations_missing_params(requests_mock, addon, kodi):
+    plugin_video.screen_translations({})
+    assert len(kodi.items) == 0
+
+
+def test_screen_translations_items_layout(requests_mock, addon, kodi):
+    requests_mock.respond(r'seasonvar.ru\/.*Skorpion.*\.html$',
+                          'assets/scorpion2.html')
+    requests_mock.respond(r'seasonvar.ru\/playls2*/list\.xml$',
+                          'assets/playlist_scorpion.json')
+    seasonurl = '/serial-12394-Skorpion_serial_2014_ndash_.html'
+    plugin_video.screen_translations({'url': seasonurl, 'tr': 'Hamster'})
+    assert len(kodi.items) == 3
+    for item in kodi.items:
+        assert_kodi_directory_item_is_dir(item)
+        assert_kodi_directory_item_has_thumb(item)
+        urlparams = item['urlparams']
+        assert 'action' in urlparams
+        assert urlparams['action'] == 'screen_episodes'
+        assert 'url' in urlparams
+        assert 'tr' in urlparams
+        assert len(urlparams['tr']) > 0
+        # urls for screen_episodes should be relative
+        assert urlparams['url'].find('/') == 0
+
+    assert kodi.items[0]['li'].name == 'Стандартный'
+    assert kodi.items[1]['li'].name == '* Hamster'
+    assert kodi.items[2]['li'].name == 'Трейлеры'
 
 
 def test_screen_seasons_missing_params(requests_mock, addon, kodi):
