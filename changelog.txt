@@ -20,4 +20,6 @@ version 0.1.2
 - fix search regression
 - fix travis build
 - change description
+version 0.1.3
+- fix unicode issues
 
