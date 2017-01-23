@@ -12,6 +12,8 @@ clean:
 	$(RM) -r resources/site-packages/addon/__pycache__
 	$(RM) resources/site-packages/seasonvar/*.pyc
 	$(RM) -r resources/site-packages/seasonvar/__pycache__
+	$(RM) -r resources/site-packages/seasonvar/tests/*.pyc
+	$(RM) -r resources/site-packages/seasonvar/tests/__pycache__
 	$(RM) tests/*.pyc
 	$(RM) -r tests/__pycache__
 	$(RM) -r tests/.cache
