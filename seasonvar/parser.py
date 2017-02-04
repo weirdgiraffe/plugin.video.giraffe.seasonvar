@@ -77,7 +77,7 @@ def playlists_fallback(season_page_html):
                'url': url.strip()}
 
 
-def playlist_items(playlist_dict):
+def episodes(playlist_dict):
     '''yield dict {'name':..., 'url': ...} for items in playlist_dict
 
     playlist_dict is dict representation of repose playlist for playlist url

@@ -54,13 +54,6 @@ class Requester(object):
         '''return utf-8 encoded main page as str'''
         return utf8(self._get(self.BASEURL).text)
 
-    def season_page(self, season_url):
-        '''return utf-8 encoded season page as str
-
-        season url should be urlencoded utf-8 str
-        '''
-        return utf8(self._get(season_url).text)
-
     def search(self, term):
         '''search for term using autocompletion
         return dict representing utf-8 encoded json
@@ -71,6 +64,19 @@ class Requester(object):
         term = quote(term)
         url = urljoin(self.BASEURL, 'autocomplete.php')
         url += '?query={0}'.format(term)
+        return self._get(url).json()
+
+    def season_page(self, season_url):
+        '''return utf-8 encoded season page as str
+
+        season url should be urlencoded utf-8 str
+        '''
+        url = urljoin(self.BASEURL, season_url)
+        return utf8(self._get(season_url).text)
+
+    def playlist(self, url):
+        '''get playlist and return dict representing utf-8 encoded json'''
+        url = urljoin(self.BASEURL, url)
         return self._get(url).json()
 
     def _get(self, url):

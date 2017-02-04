@@ -7,6 +7,8 @@
 #
 import os
 import pytest
+import re
+import requests
 import seasonvar.parser as parser
 from seasonvar.requester import Requester
 from datetime import datetime
@@ -43,3 +45,26 @@ def test_pase_latin_search_items_online(term, min_suggestions):
     assert len(suggestions) >= min_suggestions
     for i in suggestions:
         assert i['url'] is not None
+
+
+@pytest.mark.skipif(os.getenv('TRAVIS', 'false') == 'true',
+                    reason='TRAVIS could not access this CDN')
+@pytest.mark.online
+def test_online_episodes():
+    req = Requester()
+    page = req.season_page(
+            'http://seasonvar.ru/serial-13945-Horoshee_mesto.html')
+    t = list(parser.playlists(page))
+    assert len(t) > 0
+    pl = t[-1]
+    assert 'url' in pl
+    assert 'tr' in pl
+    playlist = req.playlist(pl['url'])
+    assert playlist is not None
+    episodes = list(parser.episodes(playlist))
+    assert len(episodes) > 0
+    for e in episodes:
+        assert re.match(r'.*\.(m3u8|mp4)$', e['url'])
+        assert len(e['name']) != 0
+        res = requests.head(e['url'])
+        assert res.status_code == 200

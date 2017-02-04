@@ -101,9 +101,9 @@ def test_parse_playlists_fallback(asset, expected_count):
     ('playlist-dom2.json', 462),
     ('playlist-scorpion.json', 22),
 ])
-def test_parse_playlists_items(asset, expected_count):
+def test_parse_episodes(asset, expected_count):
     with open(assetpath(asset)) as f:
-        items = list(parser.playlist_items(json.loads(f.read())))
+        items = list(parser.episodes(json.loads(f.read())))
         assert len(items) == expected_count
         for i in items:
            assert 'name' in i
