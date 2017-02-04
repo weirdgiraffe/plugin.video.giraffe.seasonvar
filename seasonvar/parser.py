@@ -67,6 +67,10 @@ def main_page_items(main_page_html, datestr):
 
 
 def search_items(search_response):
+    '''yield dict {'name':..., 'url': ...} for items in search_response
+
+    search_response is dict representation of search response
+    '''
     for name, url in zip(search_response['suggestions'],
                          search_response['data']):
         if url:
