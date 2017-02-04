@@ -96,3 +96,17 @@ def test_parse_playlists_fallback(asset, expected_count):
         playlists = list(parser.playlists_fallback(f.read()))
         assert len(playlists) == expected_count
 
+
+@pytest.mark.parametrize('asset, expected_count', [
+    ('playlist-dom2.json', 462),
+    ('playlist-scorpion.json', 22),
+])
+def test_parse_playlists_items(asset, expected_count):
+    with open(assetpath(asset)) as f:
+        items = list(parser.playlist_items(json.loads(f.read())))
+        assert len(items) == expected_count
+        for i in items:
+           assert 'name' in i
+           assert 'name' != ''
+           assert 'url' in i
+           assert 'url' != ''

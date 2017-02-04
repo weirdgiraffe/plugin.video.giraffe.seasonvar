@@ -8,6 +8,31 @@
 import re
 
 
+def main_page_items(main_page_html, datestr):
+    '''Collect all dayblock items(i.e episode changes) for a given date
+    and yields dict {'url': ..., 'name': ..., 'changes': ...} for each
+    episode for that date.
+
+    datestr should be in format 'dd.mm.yyyy'
+    '''
+    print(type(main_page_html))
+    for (date, dayblock) in _main_page_dayblocks(main_page_html):
+        if datestr == date:
+            for item in _main_page_dayblock_items(dayblock):
+                yield item
+
+
+def search_items(search_response):
+    '''yield dict {'name':..., 'url': ...} for items in search_response
+
+    search_response is dict representation of search response
+    '''
+    for name, url in zip(search_response['suggestions'],
+                         search_response['data']):
+        if url:
+            yield {'name': name, 'url': '/' + url}
+
+
 def seasons(season_page_html):
     '''takes content of season page and yields
     all seasons for the same show.
@@ -52,29 +77,20 @@ def playlists_fallback(season_page_html):
                'url': url.strip()}
 
 
-def main_page_items(main_page_html, datestr):
-    '''Collect all dayblock items(i.e episode changes) for a given date
-    and yields dict {'url': ..., 'name': ..., 'changes': ...} for each
-    episode for that date.
+def playlist_items(playlist_dict):
+    '''yield dict {'name':..., 'url': ...} for items in playlist_dict
 
-    datestr should be in format 'dd.mm.yyyy'
+    playlist_dict is dict representation of repose playlist for playlist url
     '''
-    print(type(main_page_html))
-    for (date, dayblock) in _main_page_dayblocks(main_page_html):
-        if datestr == date:
-            for item in _main_page_dayblock_items(dayblock):
-                yield item
-
-
-def search_items(search_response):
-    '''yield dict {'name':..., 'url': ...} for items in search_response
-
-    search_response is dict representation of search response
-    '''
-    for name, url in zip(search_response['suggestions'],
-                         search_response['data']):
-        if url:
-            yield {'name': name, 'url': '/' + url}
+    playlist = playlist_dict['playlist']
+    for entry in playlist:
+        if 'playlist' in entry:
+            for episode in entry['playlist']:
+                yield {'url': episode['file'],
+                       'name': episode['comment'].replace('<br>', ' ')}
+        else:
+            yield {'url': entry['file'],
+                   'name': entry['comment'].replace('<br>', ' ')}
 
 
 def _translate_div(season_page_html):
