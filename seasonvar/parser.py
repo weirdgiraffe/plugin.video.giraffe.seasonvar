@@ -48,8 +48,10 @@ def seasons(season_page_html):
 
 
 def playlists(season_page_html):
-    '''takes content of season page and yields
-    dict with translation name and playlist url.
+    '''takes content of season page and yield dict {'tr':..., 'url':...}
+    where 'tr' is a translation name and 'url' is a playlist url.
+    If no translations found on page, then search for playlist urls only
+    will be done. In this case translation names will be None.
 
     season_page_html should be utf-8 encoded html content
     '''
@@ -61,20 +63,11 @@ def playlists(season_page_html):
         for name, url in r.findall(div):
             yield {'tr': name.strip(),
                    'url': url.strip()}
-
-
-def playlists_fallback(season_page_html):
-    '''takes content of season page and yields
-    dict with translation name and playlist url, but
-    search only for playlists on page, translation
-    name will be None.
-
-    season_page_html should be utf-8 encoded html content
-    '''
-    r = re.compile(r'var\s+pl\d+\s+=\s+"(.+)";')
-    for url in r.findall(season_page_html):
-        yield {'tr': None,
-               'url': url.strip()}
+    else:
+        r = re.compile(r'var\s+pl\d+\s+=\s+"(.+)";')
+        for url in r.findall(season_page_html):
+            yield {'tr': None,
+                   'url': url.strip()}
 
 
 def episodes(playlist_dict):

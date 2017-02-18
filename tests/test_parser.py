@@ -77,23 +77,12 @@ def test_parse_seasons(asset, expected_count):
 
 @pytest.mark.parametrize('asset, expected_count', [
     ('serial-15030-Izgoi_2016-2-season.html', 4),
-    ('serial-15031-Sdelano_iz_vtorsyr_ya.html', 0),
+    ('serial-15031-Sdelano_iz_vtorsyr_ya.html', 1),
     ('serial-15123-Major_i_magiya.html', 0),
 ])
 def test_parse_playlists(asset, expected_count):
     with open(assetpath(asset)) as f:
         playlists = list(parser.playlists(f.read()))
-        assert len(playlists) == expected_count
-
-
-@pytest.mark.parametrize('asset, expected_count', [
-    ('serial-15030-Izgoi_2016-2-season.html', 5),
-    ('serial-15031-Sdelano_iz_vtorsyr_ya.html', 1),
-    ('serial-15123-Major_i_magiya.html', 0),
-])
-def test_parse_playlists_fallback(asset, expected_count):
-    with open(assetpath(asset)) as f:
-        playlists = list(parser.playlists_fallback(f.read()))
         assert len(playlists) == expected_count
 
 
