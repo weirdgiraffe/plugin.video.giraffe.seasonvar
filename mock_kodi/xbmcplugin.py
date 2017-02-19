@@ -1,9 +1,48 @@
+try:  # python2
+    from urlparse import urlparse, parse_qs
+except ImportError:  # python3
+    from urllib.parse import urlparse, parse_qs
+
+class DirectoryItem:
+    def __init__(self, handler, url, list_item, is_directory, items_count):
+        self.handler = handler
+        self.url = url
+        self.list_item = list_item
+        self.directory = is_directory
+        self.items_count = items_count
+        self.url_params = dict()
+        o = urlparse(url)
+        for k, v in parse_qs(o.query).items():
+            if len(v) == 1:
+                self.url_params[k] = v[0]
+            else:
+                self.url_params[k] = v
+
+    def __str__(self):
+        return '<DirectoryItem '\
+               'handler={0} '\
+               'url={1} '\
+               'item={2} '\
+               'directory={3} '\
+               'items_count={4}>'.format(
+                       self.handler,
+                       self.url,
+                       self.list_item,
+                       self.directory,
+                       self.items_count)
+
+
+directory = []
+
 
 def addDirectoryItem(handler, url, list_item, is_directory, items_count=None):
-    print('handler={0} url={1} item={2} directory={3} item={4}'.format(
-        handler, url, list_item, is_directory, items_count))
+    global directory
+    directory += [
+            DirectoryItem(handler, url, list_item, is_directory, items_count)
+            ]
     return True
 
 
 def endOfDirectory(handler):
-    print('directory published')
+    for d in directory:
+        print(d)

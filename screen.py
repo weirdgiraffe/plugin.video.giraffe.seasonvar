@@ -5,12 +5,12 @@
 #
 # Distributed under terms of the MIT license.
 #
-from kodi import plugin, logger
+from kodi import logger
 from seasonvar import requester
 from datetime import datetime, timedelta
 
 
-def week():
+def week(plugin):
     date = datetime.today()
     for date_offset in range(7):
         datestr = date.strftime('%d.%m.%Y')
@@ -23,7 +23,7 @@ def week():
     plugin.publish_screen()
 
 
-if __name__ == "__main__":
+def render_screen(plugin):
     screen = plugin.args.get('screen')
     if screen is not None:
         try:
@@ -32,7 +32,7 @@ if __name__ == "__main__":
              'episodes': None,
              'seasons': None,
              'translations': None,
-             }[screen]()
+             }[screen](plugin)
         except KeyError:
             logger.error('unexpected screen "{0}"'.format(screen))
         except requester.NetworkError:
@@ -45,3 +45,9 @@ if __name__ == "__main__":
             plugin.show_notification(
                 'HTTP error',
                 'Something goes wrong. Please, send your logs to addon author')
+
+
+if __name__ == "__main__":
+    import sys
+    from kodi import Plugin
+    render_screen(Plugin(*sys.argv))

@@ -107,6 +107,3 @@ class Plugin:
             message.encode('ascii', 'ignore'),
             timeout,
             self.icon))
-
-
-plugin = Plugin(*sys.argv)
