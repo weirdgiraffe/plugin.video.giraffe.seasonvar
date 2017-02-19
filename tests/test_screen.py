@@ -20,7 +20,7 @@ def strip_colors(instr):
 
 
 def test_screen_layout_week():
-    plugin = Plugin('filename.py', '1', 'plugin://blah?screen=week')
+    plugin = Plugin('plugin://url', '1', 'plugin://url?screen=week')
     del directory[:]
     render_screen(plugin)
 
