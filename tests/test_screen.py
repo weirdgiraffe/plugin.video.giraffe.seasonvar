@@ -21,7 +21,7 @@ def strip_colors(instr):
 
 def test_screen_layout_week():
     plugin = Plugin('filename.py', '1', 'plugin://blah?screen=week')
-    directory.clear()
+    del directory[:]
     render_screen(plugin)
 
     # expect list of 8 entries for last 7 days and one entry for search

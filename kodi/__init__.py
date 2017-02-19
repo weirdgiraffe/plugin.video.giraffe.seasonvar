@@ -19,7 +19,8 @@ except ImportError:  # mocked kodi
     from mock_kodi import xbmcplugin
 
 try:  # python2
-    from urlparse import urlparse, parse_qs, urlencode
+    from urllib import urlencode
+    from urlparse import urlparse, parse_qs
 except ImportError:  # python3
     from urllib.parse import urlparse, parse_qs, urlencode
 
