@@ -74,6 +74,14 @@ class Requester(object):
         url = urljoin(self.BASEURL, season_url)
         return utf8(self._get(url).text)
 
+    def player(self, referer, player_params):
+        '''return utf-8 encoded response from player.php
+        player_params is a dict with parameters
+        '''
+        url = urljoin(self.BASEURL, '/player.php')
+        refurl = urljoin(self.BASEURL, referer)
+        return utf8(self._xhtml(url, refurl, player_params).text)
+
     def playlist(self, url):
         '''get playlist and return dict representing utf-8 encoded json'''
         url = urljoin(self.BASEURL, url)
@@ -87,5 +95,22 @@ class Requester(object):
                 return page
             else:
                 raise HTTPError('GET {0}\n{1}'.format(url, page))
+        except requests.exceptions.RequestException as e:
+            raise NetworkError(repr(e))
+
+    def _xhtml(self, url, referer, data):
+        try:
+            page = self.session.post(
+                    url,
+                    headers={
+                        'Referer': referer,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    data=data)
+            if page.status_code == 200:
+                page.encoding = 'utf-8'
+                return page
+            else:
+                raise HTTPError('POST {0}\n{1}'.format(url, page))
         except requests.exceptions.RequestException as e:
             raise NetworkError(repr(e))

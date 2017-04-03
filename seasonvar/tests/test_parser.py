@@ -83,9 +83,8 @@ def test_parse_player_params():
 
 
 @pytest.mark.parametrize('asset, expected_count', [
-    ('serial-15030-Izgoi_2016-2-season.html', 4),
-    ('serial-15031-Sdelano_iz_vtorsyr_ya.html', 1),
-    ('serial-15123-Major_i_magiya.html', 0),
+    ('player-response-example-single.html', 1),
+    ('player-response-example-multi.html', 6),
 ])
 def test_parse_playlists(asset, expected_count):
     with open(assetpath(asset)) as f:

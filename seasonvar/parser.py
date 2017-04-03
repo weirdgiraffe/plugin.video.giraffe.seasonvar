@@ -72,15 +72,16 @@ def playlists(season_page_html):
     season_page_html should be utf-8 encoded html content
     '''
     div = _translate_div(season_page_html)
+    print(div)
     if div is not None:
-        r = re.compile(r'<li\s+id="translate.*?>(.*?)</li>.*?'
-                       r'var\s+pl\d+\s+=\s+"(.*?)";',
+        r = re.compile(r'<li data-click="translate[^>]*?>(.*?)</li>.*?'
+                       'pl\[\d+\] = "(.*?)";',
                        re.DOTALL)
         for name, url in r.findall(div):
             yield {'tr': name.strip(),
                    'url': url.strip()}
     else:
-        r = re.compile(r'var\s+pl\d+\s+=\s+"(.+)";')
+        r = re.compile(r'var pl = {\'0\': "(.+)"};')
         for url in r.findall(season_page_html):
             yield {'tr': None,
                    'url': url.strip()}
@@ -103,7 +104,7 @@ def episodes(playlist_dict):
 
 
 def _translate_div(season_page_html):
-    r = re.compile(r'<ul\s+id="translateDiv"(.*?)</ul>', re.DOTALL)
+    r = re.compile(r'<ul class="pgs-trans"(.*?)</ul>', re.DOTALL)
     for b in r.findall(season_page_html):
         return b
 

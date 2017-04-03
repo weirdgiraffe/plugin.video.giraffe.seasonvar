@@ -56,7 +56,6 @@ def test_parse_player_params_online():
     assert params
 
 
-@pytest.mark.online
 @pytest.mark.parametrize('term, min_suggestions', [
     ('bone', 1),
     ('привет', 1),
@@ -71,15 +70,17 @@ def test_pase_latin_search_items_online(term, min_suggestions):
         assert i['url'] is not None
 
 
-@pytest.mark.skip
 @pytest.mark.skipif(os.getenv('TRAVIS', 'false') == 'true',
                     reason='TRAVIS could not access this CDN')
 @pytest.mark.online
 def test_online_episodes():
     req = Requester()
-    page = req.season_page(
-            'http://seasonvar.ru/serial-13945-Horoshee_mesto.html')
-    t = list(parser.playlists(page))
+    page = req.season_page('/serial-13945-Horoshee_mesto.html')
+    params = parser.player_params(page)
+    assert params
+    player = req.player('/serial-13945-Horoshee_mesto.html', params)
+    assert player
+    t = list(parser.playlists(player))
     assert len(t) > 0
     pl = t[-1]
     assert 'url' in pl
