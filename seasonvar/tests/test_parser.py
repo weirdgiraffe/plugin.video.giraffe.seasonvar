@@ -31,15 +31,13 @@ def test_parse_main_page_dayblock(asset, expected_dates):
 @pytest.mark.parametrize('asset, expected_items', [
     ('dayblock_single.html', [
         {
-            'changes': '11 серия (Amedia)',
+            'changes': '(6 сезон) 11 серия (Amedia)',
             'name': 'Родина',
-            'season': '(6 сезон)',
             'url': '/serial-14903-Rodina-00006-sezon.html'
         },
         {
             'changes': '10 серия (Котова)',
             'name': 'До самой смерти',
-            'season': '',
             'url': '/serial-14996-Do_samoj_smerti.html'
         }]),
 ])

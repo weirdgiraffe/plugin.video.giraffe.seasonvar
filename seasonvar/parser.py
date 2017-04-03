@@ -147,7 +147,7 @@ def _main_page_dayblock_items(dayblock_content):
         '(.*?)<span[^>]*?>(.+?)<\/span>.*?<\/a>',
         re.DOTALL)
     for (url, name, season, changes) in r.findall(dayblock_content):
+        changes = season.strip() + ' ' + changes.strip()
         yield {'url': url,
                'name': name.strip(),
-               'season': season.strip(),
                'changes': changes.strip()}
