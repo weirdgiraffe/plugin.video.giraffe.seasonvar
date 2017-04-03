@@ -15,10 +15,20 @@ from datetime import datetime
 
 
 @pytest.mark.online
+def test_parse_main_page_dayblocks():
+    req = Requester()
+    main_page_html = req.main_page()
+    dates = []
+    for d, content in parser._main_page_dayblocks(main_page_html):
+        dates.append(d)
+        assert len(content) > 0
+    assert len(dates) > 0
+
+
+@pytest.mark.online
 def test_parse_main_page_items_online():
     req = Requester()
     main_page_html = req.main_page()
-    print(type(main_page_html))
     date = datetime.today()
     datestr = date.strftime('%d.%m.%Y')
     changes = list(parser.main_page_items(main_page_html, datestr))
@@ -30,6 +40,20 @@ def test_parse_main_page_items_online():
         assert c['name'] != ''
         assert 'changes' in c
         assert c['changes'] != ''
+
+
+@pytest.mark.online
+def test_parse_player_params_online():
+    req = Requester()
+    main_page_html = req.main_page()
+    date = datetime.today()
+    datestr = date.strftime('%d.%m.%Y')
+    changes = list(parser.main_page_items(main_page_html, datestr))
+    assert len(changes) > 0
+    c = changes[0]
+    season_page_html = req.season_page(c['url'])
+    params = parser.player_params(season_page_html)
+    assert params
 
 
 @pytest.mark.online
@@ -47,6 +71,7 @@ def test_pase_latin_search_items_online(term, min_suggestions):
         assert i['url'] is not None
 
 
+@pytest.mark.skip
 @pytest.mark.skipif(os.getenv('TRAVIS', 'false') == 'true',
                     reason='TRAVIS could not access this CDN')
 @pytest.mark.online

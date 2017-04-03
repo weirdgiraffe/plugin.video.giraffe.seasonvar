@@ -75,6 +75,13 @@ def test_parse_seasons():
         assert len(seasons) == expected_count
 
 
+def test_parse_player_params():
+    asset = 'serial-example-playerparams.html'
+    with open(assetpath(asset)) as f:
+        params = parser.player_params(f.read())
+        assert params
+
+
 @pytest.mark.parametrize('asset, expected_count', [
     ('serial-15030-Izgoi_2016-2-season.html', 4),
     ('serial-15031-Sdelano_iz_vtorsyr_ya.html', 1),

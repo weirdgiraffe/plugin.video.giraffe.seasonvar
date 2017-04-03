@@ -47,6 +47,22 @@ def seasons(season_page_html):
         yield url
 
 
+def player_params(season_page_html):
+    '''extract parameters for player.php to retrieve playlists
+    if parameters not found return None
+    '''
+    sands = _season_and_serial(season_page_html)
+    sandt = _secure_and_time(season_page_html)
+    if sands and sandt:
+        return {
+                'id': sands[0],
+                'serial': sands[1],
+                'secure': sandt[0],
+                'time': sandt[1],
+                'type': 'html5',
+        }
+
+
 def playlists(season_page_html):
     '''takes content of season page and yield dict {'tr':..., 'url':...}
     where 'tr' is a translation name and 'url' is a playlist url.
@@ -90,6 +106,23 @@ def _translate_div(season_page_html):
     r = re.compile(r'<ul\s+id="translateDiv"(.*?)</ul>', re.DOTALL)
     for b in r.findall(season_page_html):
         return b
+
+
+def _season_and_serial(season_page_html):
+    r = re.compile(r'data-id-season="(\d+)" data-id-serial="(\d+)"')
+    match = r.search(season_page_html)
+    if match:
+        return match.groups()
+
+
+def _secure_and_time(season_page_html):
+    r = re.compile(r"var data4play = {.*?"
+                   "'secureMark': '([a-f0-9]+)',.*?"
+                   "'time': ([0-9]+).*?"
+                   "}", re.DOTALL)
+    match = r.search(season_page_html)
+    if match:
+        return match.groups()
 
 
 def _main_page_dayblocks(full_page_html):

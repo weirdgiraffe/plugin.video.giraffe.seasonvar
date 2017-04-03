@@ -72,7 +72,7 @@ class Requester(object):
         season url should be urlencoded utf-8 str
         '''
         url = urljoin(self.BASEURL, season_url)
-        return utf8(self._get(season_url).text)
+        return utf8(self._get(url).text)
 
     def playlist(self, url):
         '''get playlist and return dict representing utf-8 encoded json'''
