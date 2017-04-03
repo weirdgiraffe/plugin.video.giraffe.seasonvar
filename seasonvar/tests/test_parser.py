@@ -30,15 +30,18 @@ def test_parse_main_page_dayblock(asset, expected_dates):
 
 @pytest.mark.parametrize('asset, expected_items', [
     ('dayblock_single.html', [
-        {'changes': '2 серия (Hamster)',
-         'name': 'Табу',
-         'url': '/serial-14866-Tabu.html'},
-        {'changes': '1 серия (NewStudio)',
-         'name': 'Лемони Сникет: 33 несчастья',
-         'url': '/serial-14959-Lemoni_Sniket_33_neschast_ya.html'},
-        {'changes': '(1 сезон) 8 серия',
-         'name': 'Однофунтовое Евангелие',
-         'url': '/serial-14606-Odnofuntovoe_Evangelie.html'}]),
+        {
+            'changes': '11 серия (Amedia)',
+            'name': 'Родина',
+            'season': '(6 сезон)',
+            'url': '/serial-14903-Rodina-00006-sezon.html'
+        },
+        {
+            'changes': '10 серия (Котова)',
+            'name': 'До самой смерти',
+            'season': '',
+            'url': '/serial-14996-Do_samoj_smerti.html'
+        }]),
 ])
 def test_parse_dayblock_items(asset, expected_items):
     with open(assetpath(asset)) as f:
@@ -95,7 +98,7 @@ def test_parse_episodes(asset, expected_count):
         items = list(parser.episodes(json.loads(f.read())))
         assert len(items) == expected_count
         for i in items:
-           assert 'name' in i
-           assert 'name' != ''
-           assert 'url' in i
-           assert 'url' != ''
+            assert 'name' in i
+            assert 'name' != ''
+            assert 'url' in i
+            assert 'url' != ''

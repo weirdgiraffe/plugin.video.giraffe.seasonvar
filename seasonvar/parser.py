@@ -108,11 +108,12 @@ def _main_page_dayblock_items(dayblock_content):
     '''Collect all series items from dayblock_content
     and for every item yield dict with description'''
     r = re.compile(
-        r'<a href="(\/serial-.+?\.html)" class="film-list-item-link">'
-        '(.+?)<\/a>(.*?)<span>(.+?)<\/span>',
+        r'<a href="(\/serial-.+?\.html)"[^>]*?>'
+        '.*?div.*?<div[^>]*?>(.+?)<\/div>'
+        '(.*?)<span[^>]*?>(.+?)<\/span>.*?<\/a>',
         re.DOTALL)
-    for (url, name, changes1, changes2) in r.findall(dayblock_content):
-        changes = '{0} {1}'.format(changes1.strip(), changes2.strip())
+    for (url, name, season, changes) in r.findall(dayblock_content):
         yield {'url': url,
                'name': name.strip(),
+               'season': season.strip(),
                'changes': changes.strip()}
