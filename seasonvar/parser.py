@@ -47,7 +47,7 @@ def seasons(season_page_html):
         yield url
 
 
-def player_params(season_page_html):
+def player_params(player_page_html):
     '''extract parameters for player.php to retrieve playlists
     if parameters not found return None
     '''
