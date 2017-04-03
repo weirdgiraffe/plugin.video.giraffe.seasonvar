@@ -67,12 +67,9 @@ def test_parse_search_response(asset, expected_suggestions):
             assert i['url'] is not None
 
 
-@pytest.mark.parametrize('asset, expected_count', [
-    ('serial-15030-Izgoi_2016-2-season.html', 2),
-    ('serial-15031-Sdelano_iz_vtorsyr_ya.html', 1),
-    ('serial-15123-Major_i_magiya.html', 1),
-])
-def test_parse_seasons(asset, expected_count):
+def test_parse_seasons():
+    asset = 'serial-example-seasonlist.html'
+    expected_count = 4
     with open(assetpath(asset)) as f:
         seasons = list(parser.seasons(f.read()))
         assert len(seasons) == expected_count
