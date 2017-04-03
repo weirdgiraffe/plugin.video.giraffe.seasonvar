@@ -96,8 +96,8 @@ def _main_page_dayblocks(full_page_html):
     '''Collect all dayblocks from full_page_html
     and yield (date, content) for every dayblock'''
     r = re.compile(
-        r'<div class="ff1">(\d{2}\.\d{2}\.\d{4})(.*?)'
-        r'(?=<div align="center"|<div class="film-list-block")',
+        r'<div class="news-head">\s*?(\d{2}\.\d{2}\.\d{4})(.*?)'
+        r'(?=<div class="doptxt"|<div class="news")',
         re.DOTALL)
     for group in r.findall(full_page_html):
         d, c = group

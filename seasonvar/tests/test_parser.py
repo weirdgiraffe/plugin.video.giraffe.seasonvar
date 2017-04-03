@@ -16,8 +16,8 @@ def assetpath(path):
 
 
 @pytest.mark.parametrize('asset, expected_dates', [
-    ('dayblock_single.html', ['15.01.2017']),
-    ('dayblock_multiple.html', ['15.01.2017', '14.01.2017'])
+    ('dayblock_single.html', ['03.04.2017']),
+    ('dayblock_multiple.html', ['03.04.2017', '02.04.2017'])
 ])
 def test_parse_main_page_dayblock(asset, expected_dates):
     with open(assetpath(asset)) as f:
