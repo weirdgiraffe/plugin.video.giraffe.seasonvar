@@ -41,13 +41,13 @@ def seasons(season_page_html):
     '''
     r = re.compile(
             r'<h2>.*?'
-            r'href="(/serial-\d+-[^-.]+(:?-\d+-(sezon|season))?\.html)".*?',
+            r'href="(/serial-\d+-[^-.]+(?:-\d+-(?:sezon|season))?\.html)".*?',
             re.DOTALL)
     for url in r.findall(season_page_html):
         yield url
 
 
-def player_params(player_page_html):
+def player_params(season_page_html):
     '''extract parameters for player.php to retrieve playlists
     if parameters not found return None
     '''
@@ -63,34 +63,32 @@ def player_params(player_page_html):
         }
 
 
-def playlists(season_page_html):
-    '''takes content of season page and yield dict {'tr':..., 'url':...}
+def playlists(player_response_html):
+    '''takes response from player.php and yield dict {'tr':..., 'url':...}
     where 'tr' is a translation name and 'url' is a playlist url.
     If no translations found on page, then search for playlist urls only
     will be done. In this case translation names will be None.
 
     season_page_html should be utf-8 encoded html content
     '''
-    div = _translate_div(season_page_html)
-    print(div)
-    if div is not None:
+    l = _translate_list(player_response_html)
+    r = re.compile(r'var pl = {\'0\': "(.+)"};')
+    for url in r.findall(player_response_html):
+        yield {'tr': None,
+               'url': url.strip()}
+    if l is not None:
         r = re.compile(r'<li data-click="translate[^>]*?>(.*?)</li>.*?'
                        'pl\[\d+\] = "(.*?)";',
                        re.DOTALL)
-        for name, url in r.findall(div):
-            yield {'tr': name.strip(),
-                   'url': url.strip()}
-    else:
-        r = re.compile(r'var pl = {\'0\': "(.+)"};')
-        for url in r.findall(season_page_html):
-            yield {'tr': None,
+        for name, url in r.findall(l):
+            yield {'tr': name.strip() if name != 'Стандартный' else None,
                    'url': url.strip()}
 
 
 def episodes(playlist_dict):
     '''yield dict {'name':..., 'url': ...} for items in playlist_dict
 
-    playlist_dict is dict representation of repose playlist for playlist url
+    playlist_html is response from requester.playlist()
     '''
     playlist = playlist_dict['playlist']
     for entry in playlist:
@@ -103,7 +101,7 @@ def episodes(playlist_dict):
                    'name': entry['comment'].replace('<br>', ' ')}
 
 
-def _translate_div(season_page_html):
+def _translate_list(season_page_html):
     r = re.compile(r'<ul class="pgs-trans"(.*?)</ul>', re.DOTALL)
     for b in r.findall(season_page_html):
         return b

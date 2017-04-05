@@ -11,6 +11,7 @@ import re
 import requests
 import seasonvar.parser as parser
 from seasonvar.requester import Requester
+from seasonvar import day_items, season_info, episodes
 from datetime import datetime
 
 
@@ -27,11 +28,9 @@ def test_parse_main_page_dayblocks():
 
 @pytest.mark.online
 def test_parse_main_page_items_online():
-    req = Requester()
-    main_page_html = req.main_page()
     date = datetime.today()
     datestr = date.strftime('%d.%m.%Y')
-    changes = list(parser.main_page_items(main_page_html, datestr))
+    changes = list(day_items(datestr))
     assert len(changes) > 0
     for c in changes:
         assert 'url' in c
@@ -43,17 +42,14 @@ def test_parse_main_page_items_online():
 
 
 @pytest.mark.online
-def test_parse_player_params_online():
-    req = Requester()
-    main_page_html = req.main_page()
+def test_parse_episodes_online():
     date = datetime.today()
     datestr = date.strftime('%d.%m.%Y')
-    changes = list(parser.main_page_items(main_page_html, datestr))
+    changes = list(day_items(datestr))
     assert len(changes) > 0
     c = changes[0]
-    season_page_html = req.season_page(c['url'])
-    params = parser.player_params(season_page_html)
-    assert params
+    e = list(episodes(c['url']))
+    assert len(e) > 0
 
 
 @pytest.mark.parametrize('term, min_suggestions', [
@@ -73,23 +69,15 @@ def test_pase_latin_search_items_online(term, min_suggestions):
 @pytest.mark.skipif(os.getenv('TRAVIS', 'false') == 'true',
                     reason='TRAVIS could not access this CDN')
 @pytest.mark.online
-def test_online_episodes():
-    req = Requester()
-    page = req.season_page('/serial-13945-Horoshee_mesto.html')
-    params = parser.player_params(page)
-    assert params
-    player = req.player('/serial-13945-Horoshee_mesto.html', params)
-    assert player
-    t = list(parser.playlists(player))
-    assert len(t) > 0
-    pl = t[-1]
-    assert 'url' in pl
-    assert 'tr' in pl
-    playlist = req.playlist(pl['url'])
-    assert playlist is not None
-    episodes = list(parser.episodes(playlist))
-    assert len(episodes) > 0
-    for e in episodes:
+def test_play_online_episodes():
+    info = season_info('/serial-13945-Horoshee_mesto.html')
+    assert info is not None
+    assert 'playlist' in info
+    assert len(info['playlist']) > 0
+    assert 'url' in info['playlist'][0]
+    el = list(episodes(info['playlist'][0]['url']))
+    assert len(el) > 0
+    for e in el:
         assert re.match(r'.*\.(m3u8|mp4)$', e['url'])
         assert len(e['name']) != 0
         res = requests.head(e['url'])

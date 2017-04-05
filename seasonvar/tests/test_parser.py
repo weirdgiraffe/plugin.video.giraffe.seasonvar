@@ -82,7 +82,7 @@ def test_parse_player_params():
 
 @pytest.mark.parametrize('asset, expected_count', [
     ('player-response-example-single.html', 1),
-    ('player-response-example-multi.html', 6),
+    ('player-response-example-multi.html', 7),
 ])
 def test_parse_playlists(asset, expected_count):
     with open(assetpath(asset)) as f:
