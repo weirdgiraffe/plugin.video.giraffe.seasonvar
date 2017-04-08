@@ -7,13 +7,24 @@
 #
 
 import seasonvar.parser as parser
-from seasonvar.requester import Requester
+from seasonvar.requester import Requester, HTTPError, NetworkError
 
 
 def day_items(datestr):
     r = Requester()
     page = r.main_page()
     return parser.main_page_items(page, datestr)
+
+
+def seasons(season_url):
+    r = Requester()
+    p = r.season_page(season_url)
+    params = parser.player_params(p)
+    if params is None:
+        return None, None
+    seasons = list(parser.seasons(p))
+    snum = [n for n, u in enumerate(seasons, 1) if u == season_url][0]
+    return snum, seasons
 
 
 def season_info(season_url):
@@ -28,7 +39,7 @@ def season_info(season_url):
     if p is not None:
         return {
             'number': snum,
-            'total': seasons,
+            'total': len(seasons),
             'playlist': list(parser.playlists(p)),
         }
 
