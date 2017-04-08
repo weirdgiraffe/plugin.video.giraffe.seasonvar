@@ -9,11 +9,13 @@ import requests
 try:
     from urlparse import urlparse, urljoin
     from urllib import quote
+
     def utf8(unicodestr):
         return unicodestr.encode('utf-8')
 
 except ImportError:  # for python 3
     from urllib.parse import quote, urlparse, urljoin
+
     def utf8(unicodestr):
         return unicodestr
 
