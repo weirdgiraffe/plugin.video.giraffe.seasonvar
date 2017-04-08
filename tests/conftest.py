@@ -18,6 +18,8 @@ try:
     import httplib as http_client
 except ImportError:  # Python 3
     import http.client as http_client
+from requests_mock import requests_mock
+
 
 http_client.HTTPConnection.debuglevel = 1
 

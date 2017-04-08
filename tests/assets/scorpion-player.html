@@ -1,0 +1,40 @@
+    <div id="htmlPlayer" data-player="html5" style="width:100%;height:100%;"></div>
+    <!-- <script src="//asset/uppod/uppod-0.8.5.js" type="text/javascript"></script> -->
+    <script src="/js/uppod-0.11.1.js" type="text/javascript"></script>
+    <script src="/styleP.php?kind=html&view=m&plst=" type="text/javascript"></script>
+    <script type="text/javascript">
+      function getObj(playlist) {
+        player = new Uppod({
+            m: "video",
+            uid: "htmlPlayer",
+            st: "uppodvideo",
+            iosplayer: 1,
+            androidplayer: 0,
+            plarrows:1,
+            plbgcolor_play: "666666",
+            pl: playlist,
+            debug: 0,
+            vast_pl: 1
+        });
+        uppodEvent('','pl')
+        // svfunc['player']['goToHash']();
+      }
+    </script>
+<script>var pl = {'0': "/playls2/15018ed677566c71ede2fd452234d2b18/trans/14354/list.xml?time=1491499517"};</script>
+  <ul class="pgs-trans">
+          <li data-click="translate" data-translate="0">Стандартный</li>
+                <li data-click="translate" data-translate="29">Hamster</li>
+      <script>pl[29] = "/playls2/15018ed677566c71ede2fd452234d2b18/transHamster/14354/list.xml?time=1491499517";</script>          <li data-click="translate" data-translate="68">Трейлеры</li>
+      <script>pl[68] = "/playls2/15018ed677566c71ede2fd452234d2b18/trans%D0%A2%D1%80%D0%B5%D0%B9%D0%BB%D0%B5%D1%80%D1%8B/14354/list.xml?time=1491499517";</script>        <li class="label">Выберите перевод:</li>
+  </ul>
+<script type="text/javascript">
+    function hdOut() {
+              svfunc['player']['swichHDno']();
+          };
+    var arEpisodes = {"0":{"1-2_seriya":{"n":1,"d":0,"next":2},"":{"next":1},"3_seriya":{"n":2,"d":0,"next":3},"4_seriya":{"n":3,"d":0,"next":4},"5_seriya":{"n":4,"d":0,"next":5},"6_seriya":{"n":5,"d":0,"next":6},"7_seriya":{"n":6,"d":0,"next":7},"8_seriya":{"n":7,"d":0,"next":8},"9_seriya":{"n":8,"d":0,"next":9},"10_seriya":{"n":9,"d":0,"next":10},"11_seriya":{"n":10,"d":0,"next":11},"12_seriya":{"n":11,"d":0,"next":12},"13_seriya":{"n":12,"d":0,"next":13},"14_seriya":{"n":13,"d":0,"next":14},"15_seriya":{"n":14,"d":0,"next":15},"16_seriya":{"n":15,"d":0,"next":16},"17_seriya":{"n":16,"d":0,"next":17},"18_seriya":{"n":17,"d":0,"next":18},"19_seriya":{"n":18,"d":0,"next":19},"20_seriya":{"n":19,"d":0}},"29":{"1-2_seriya":{"n":1,"d":0,"next":2},"":{"next":1},"3_seriya":{"n":2,"d":0,"next":3},"4_seriya":{"n":3,"d":0,"next":4},"5_seriya":{"n":4,"d":0,"next":5},"6_seriya":{"n":5,"d":0,"next":6},"7_seriya":{"n":6,"d":0,"next":7},"8_seriya":{"n":7,"d":0,"next":8},"9_seriya":{"n":8,"d":0,"next":9},"10_seriya":{"n":9,"d":0,"next":10},"11_seriya":{"n":10,"d":0,"next":11},"12_seriya":{"n":11,"d":0,"next":12},"13_seriya":{"n":12,"d":0,"next":13},"14_seriya":{"n":13,"d":0,"next":14},"15_seriya":{"n":14,"d":0,"next":15},"16_seriya":{"n":15,"d":0,"next":16},"17_seriya":{"n":16,"d":0,"next":17},"18_seriya":{"n":17,"d":0,"next":18},"19_seriya":{"n":18,"d":0,"next":19},"20_seriya":{"n":19,"d":0}},"68":{"Osnovnoj_seriya":{"n":1,"d":0,"next":2},"":{"next":1},"Promo_3-go_sezona_seriya":{"n":2,"d":0}}};
+    if(mark['trans'] == '') { mark['trans'] = 0; } // если отметки нет, то дефолтный ноль
+    if ( $('[data-translate="'+mark['trans']+'"]').length == 0) { mark['trans'] = 0; } // если какой-нить мудак поменял перевод и по отметки не существует
+    if($('[data-click=translate]').length > 0 && $('[data-translate=0]').length == 0) {mark['trans'] = 68;} // если внезапно и дефолтного плейлиста не существует
+    $('[data-translate='+mark['trans']+']').addClass("act");
+    getObj(pl[mark['trans']]);
+</script>
