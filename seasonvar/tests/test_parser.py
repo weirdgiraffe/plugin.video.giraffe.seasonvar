@@ -8,6 +8,7 @@
 import json
 import os
 import pytest
+import pprint
 import seasonvar.parser as parser
 
 
@@ -88,11 +89,16 @@ def test_parse_playlists(asset, expected_count):
     with open(assetpath(asset)) as f:
         playlists = list(parser.playlists(f.read()))
         assert len(playlists) == expected_count
+        tr = set([])
+        pprint.pprint(playlists)
+        for pl in playlists:
+            assert pl['tr'] not in tr
+            tr.add(pl['tr'])
 
 
 @pytest.mark.parametrize('asset, expected_count', [
     ('playlist-dom2.json', 462),
-    ('playlist-scorpion.json', 22),
+    ('playlist-scorpion.json', 19),
 ])
 def test_parse_episodes(asset, expected_count):
     with open(assetpath(asset)) as f:

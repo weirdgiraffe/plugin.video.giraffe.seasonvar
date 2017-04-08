@@ -77,8 +77,8 @@ def playlists(player_response_html):
         yield {'tr': None,
                'url': url.strip()}
     if l is not None:
-        r = re.compile(r'<li data-click="translate[^>]*?>(.*?)</li>.*?'
-                       'pl\[\d+\] = "(.*?)";',
+        r = re.compile(r'<li data-click="translate[^>]*?>([^<]+)</li>[\s\n]*?'
+                       '<script>pl\[\d+\] = "(.*?)";',
                        re.DOTALL)
         for name, url in r.findall(l):
             yield {'tr': name.strip() if name != 'Стандартный' else None,
