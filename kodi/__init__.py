@@ -40,9 +40,7 @@ class logger:
         xbmc.log(s, xbmc.LOGERROR)
 
 
-def list_item(name, **kwargs):
-    thumb = kwargs.get('thumb')
-    playable = kwargs.get('playable')
+def list_item(name, thumb):
     li = xbmcgui.ListItem(name)
     if thumb is not None:
         li.setArt(thumb)
@@ -51,8 +49,6 @@ def list_item(name, **kwargs):
         # but only these methods actually works with Jarvis
         li.setIconImage(thumb)
         li.setThumbnailImage(thumb)
-    if playable is not None:
-        li.setProperty('IsPlayable', str(playable))
     return li
 
 
@@ -80,8 +76,21 @@ class Plugin:
     def args(self):
         return self._args
 
+    def play(self, url):
+        li = xbmcgui.ListItem(path=url)
+        li.setProperty('IsPlayable', 'true')
+        xbmcplugin.setResolvedUrl(self._handler, True, li)
+
+    def add_screen_item(self, name, url, **kwargs):
+        thumb = kwargs.get('thumb')
+        li = list_item(name, thumb)
+        ret = xbmcplugin.addDirectoryItem(self._handler, url, li, False)
+        if not ret:
+            logger.error('failed to add {0} playable item'.format(name))
+
     def add_screen_directory(self, name, url, **kwargs):
-        li = list_item(name, **kwargs)
+        thumb = kwargs.get('thumb')
+        li = list_item(name, thumb)
         args = [self._handler, url, li, True]
         items_count = kwargs.get('items_count')
         if items_count:
@@ -90,8 +99,8 @@ class Plugin:
         if not ret:
             logger.error('failed to add {0} directory item'.format(name))
 
-    def publish_screen(self):
-        xbmcplugin.endOfDirectory(self._handler)
+    def publish_screen(self, ok, refresh=False):
+        xbmcplugin.endOfDirectory(self._handler, ok, refresh)
 
     def make_url(self, argv):
         return '{0}?{1}'.format(self._url, urlencode(argv))

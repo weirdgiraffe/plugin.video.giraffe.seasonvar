@@ -19,12 +19,12 @@ class DirectoryItem:
                 self.url_params[k] = v
 
     def __str__(self):
-        return '<DirectoryItem '\
-               'handler={0} '\
-               'url={1} '\
-               'item={2} '\
-               'directory={3} '\
-               'items_count={4}>'.format(
+        return '<DirectoryItem\n'\
+               '  handler={0}\n'\
+               '  url={1}\n'\
+               '  item={2}\n'\
+               '  directory={3}\n'\
+               '  items_count={4}\n/>'.format(
                        self.handler,
                        self.url,
                        self.list_item,
@@ -43,6 +43,6 @@ def addDirectoryItem(handler, url, list_item, is_directory, items_count=None):
     return True
 
 
-def endOfDirectory(handler):
+def endOfDirectory(handler, success, refresh):
     for d in directory:
         print(d)
