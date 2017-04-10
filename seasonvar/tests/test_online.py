@@ -52,6 +52,7 @@ def test_parse_episodes_online():
     assert len(e) > 0
 
 
+@pytest.mark.online
 @pytest.mark.parametrize('term, min_suggestions', [
     ('bone', 1),
     ('привет', 1),
