@@ -39,7 +39,8 @@ def day(plugin):
         })
         name = '{0} [COLOR FFFFD700]{1}[/COLOR]'.format(
                 i['name'], i['changes'])
-        plugin.add_screen_directory(name, url)
+        plugin.add_screen_directory(name, url,
+                                    thumb=seasonvar.thumb_url(i['url']))
     plugin.publish_screen(True)
 
 
@@ -51,6 +52,7 @@ def episodes(plugin):
         plugin.publish_screen(False)
         return
     tr = plugin.args.get('tr')
+    thumb = seasonvar.thumb_url(season_url)
     season = seasonvar.season_info(season_url)
     if season is None:
         logger.error('{0}: failed to get season info: {0}'.format(
@@ -77,7 +79,7 @@ def episodes(plugin):
     pl_url = (x['url'] for x in season['playlist'] if x['tr'] == tr)
     for e in (x for url in pl_url for x in seasonvar.episodes(url)):
         url = plugin.make_url({'play': e['url']})
-        plugin.add_screen_item(e['name'], url)
+        plugin.add_screen_item(e['name'], url, thumb=thumb)
     plugin.publish_screen(True, True)
 
 
@@ -101,7 +103,7 @@ def seasons(plugin):
             'screen': 'episodes',
             'url': s,
         })
-        plugin.add_screen_directory(name, url)
+        plugin.add_screen_directory(name, url, thumb=seasonvar.thumb_url(s))
     plugin.publish_screen(True, True)
 
 
@@ -113,6 +115,7 @@ def translations(plugin):
         plugin.publish_screen(False)
         return
     tr = plugin.args.get('tr')
+    thumb = seasonvar.thumb_url(season_url)
     season = seasonvar.season_info(season_url)
     if season is None:
         logger.error('{0}: failed to get season info: {0}'.format(
@@ -132,7 +135,7 @@ def translations(plugin):
         name = '{0}{1}'.format(
                 prefix,
                 pl['tr'] if pl['tr'] is not None else 'Стандартная')
-        plugin.add_screen_directory(name, url)
+        plugin.add_screen_directory(name, url, thumb=thumb)
     plugin.publish_screen(True, True)
 
 
@@ -143,11 +146,10 @@ def play(plugin):
             'play', plugin.args))
         plugin.publish_screen(False)
         return
-    print('here')
     plugin.play(play_url)
 
 
-def render_screen(plugin):
+def render(plugin):
     screen = plugin.args.get('screen')
     try:
         if 'play' in plugin.args:
@@ -176,4 +178,4 @@ def render_screen(plugin):
 
 if __name__ == "__main__":
     import sys
-    render_screen(Plugin(*sys.argv))
+    render(Plugin(*sys.argv))
