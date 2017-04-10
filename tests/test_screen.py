@@ -10,7 +10,7 @@ import re
 from datetime import datetime, timedelta
 from screen import render_screen
 from kodi import Plugin
-from mock_kodi.xbmcplugin import directory
+from mock_kodi.xbmcplugin import directory, resolved, clear_resolved
 
 assert pytest
 
@@ -127,3 +127,14 @@ def test_screen_translations(requests_mock):
         assert i.directory is True
         assert i.url_params['screen'] == 'episodes'
         assert i.url_params['url'] != ''
+
+
+def test_play():
+    del directory[:]
+    clear_resolved()
+    args = 'plugin://url?play=someurl'
+    plugin = Plugin('plugin://url', '1', args)
+
+    render_screen(plugin)
+
+    assert resolved() == 'someurl'

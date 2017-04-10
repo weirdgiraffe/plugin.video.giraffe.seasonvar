@@ -3,6 +3,7 @@ try:  # python2
 except ImportError:  # python3
     from urllib.parse import urlparse, parse_qs
 
+
 class DirectoryItem:
     def __init__(self, handler, url, list_item, is_directory, items_count):
         self.handler = handler
@@ -33,6 +34,17 @@ class DirectoryItem:
 
 
 directory = []
+_resolved = ''
+
+
+def clear_resolved():
+    global _resolved
+    _resolved = None
+
+
+def resolved():
+    global _resolved
+    return _resolved
 
 
 def addDirectoryItem(handler, url, list_item, is_directory, items_count=None):
@@ -46,3 +58,8 @@ def addDirectoryItem(handler, url, list_item, is_directory, items_count=None):
 def endOfDirectory(handler, success, refresh):
     for d in directory:
         print(d)
+
+
+def setResolvedUrl(handle, success, li):
+    global _resolved
+    _resolved = li.path

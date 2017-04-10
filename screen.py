@@ -137,12 +137,13 @@ def translations(plugin):
 
 
 def play(plugin):
-    play_url = plugin.args.get('url')
+    play_url = plugin.args.get('play')
     if play_url is None:
         logger.error('{0}: "url" arg is missing or malformed: {0}'.format(
             'play', plugin.args))
         plugin.publish_screen(False)
         return
+    print('here')
     plugin.play(play_url)
 
 
