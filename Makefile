@@ -23,6 +23,7 @@ localcleanup: zip
 	scp plugin.video.* localkodi:.
 
 localpush: clean
+	ssh localkodi 'rm -rf .kodi/addons/$(ADDON)/resources/site-packages/*'
 	scp -r resources/site-packages/* localkodi:.kodi/addons/$(ADDON)/resources/site-packages/
 
 
