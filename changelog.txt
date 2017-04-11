@@ -1,0 +1,26 @@
+version 0.0.1
+basic functionality:
+- display one week
+- seasons choosing
+- play episodes
+- search series
+version 0.0.2
+- remove rss source to not display not playable content
+version 0.0.3
+- fix cyrilic issues in search
+version 0.0.4
+version 0.0.5
+version 0.1.0
+- refactor and fix api changes(not really)
+version 0.1.1
+- restore functionality
+- refactoring
+- add more tests(and online tests)
+version 0.1.2
+- fix search regression
+- fix travis build
+- change description
+version 0.1.3
+- fix unicode issues
+- add translations
+
