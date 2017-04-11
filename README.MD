@@ -25,4 +25,4 @@
 ![](screenshots/seasons.png)
 ![](screenshots/translations.png)
 ![](screenshots/search_input.png)
-![](screenshots/search_results.png)
+![](screenshots/search_result.png)

@@ -23,4 +23,7 @@ version 0.1.2
 version 0.1.3
 - fix unicode issues
 - add translations
-
+version 0.2.0
+- rewrite from scratch
+- fixes for new site layout
+- notifications on blocked content
