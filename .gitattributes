@@ -1,7 +1,9 @@
-tests/assets/* linguist-vendored
-seasonvar/tests/assets/* linguist-vendored
-/tests export-ignore
-/seasonvar/tests export-ignore
+resources/site-packages/plugin_video/tests/assets/* linguist-vendored
+resources/site-packages/seasonvar/tests/assets/* linguist-vendored
+
+resources/site-packages/mock_kodi export-ignore
+resources/site-packages/plugin_video/tests export-ignore
+resources/site-packages/seasonvar/tests export-ignore
 pytest.ini export-ignore
 .gitignore export-ignore
 .gitattributes export-ignore
@@ -9,7 +11,7 @@ pytest.ini export-ignore
 requirements.txt export-ignore
 Makefile export-ignore
 README.MD export-ignore
-/screenshots export-ignore
+screenshots export-ignore
 ~
 ~
 ~
