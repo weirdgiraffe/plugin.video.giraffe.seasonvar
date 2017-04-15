@@ -2,7 +2,7 @@ language: python
 python:
   - "2.7"
 install: "pip install -r requirements.txt"
-script: python -m py.test -m 'not online'
+script: python -m py.test
 branches:
   only:
     - master
