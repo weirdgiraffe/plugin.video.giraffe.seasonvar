@@ -12,7 +12,7 @@ import xbmcaddon
 
 a = xbmcaddon.Addon()
 p = a.getAddonInfo('path')
-sys.path.append(os.path.join(p, 'resources', 'site-packages'))
+sys.path.intsert(1, os.path.join(p, 'resources', 'site-packages'))
 
 
 if __name__ == '__main__':
