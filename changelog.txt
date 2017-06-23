@@ -31,6 +31,8 @@ version 0.2.1
 - fix and simplify regexps
 - remove refresh from displayed directories
 version 0.2.2
-- fix for LibreELEC
 version 0.2.3
+- fix for LibreELEC
 - bugfixes
+version 0.2.4
+- add direct search functionality
