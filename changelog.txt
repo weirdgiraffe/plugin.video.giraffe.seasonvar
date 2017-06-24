@@ -36,3 +36,5 @@ version 0.2.3
 - bugfixes
 version 0.2.4
 - add direct search functionality
+version 0.2.5
+- bugfixes
