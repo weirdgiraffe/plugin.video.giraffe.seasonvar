@@ -40,3 +40,5 @@ version 0.2.5
 - bugfixes
 version 0.2.6
 - update parser
+version 0.2.7
+- fix search functionality
