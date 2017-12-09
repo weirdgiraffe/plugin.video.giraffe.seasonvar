@@ -42,3 +42,5 @@ version 0.2.6
 - update parser
 version 0.2.7
 - fix search functionality
+version 0.2.8
+- adapt to a new playlist format
